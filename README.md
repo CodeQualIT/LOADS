@@ -265,3 +265,29 @@ Is encoded as:
 252 | 97 118 97 116 97 114 | 255 | 251 | 40 105 109 97 103 101 47 112 110 103 41 | <base64url without padding> | 254    
  {  |        avatar        | :   |<bin>|               (image/png)               | <base64url without padding> |  }
 ```
+
+### Metadata
+> This section is incomplete and subject to change.
+
+Metadata is described in an object at start of the data structure
+
+#### Version
+v -> version number
+
+TODO, specify format (incrementing number? or semantic versioning? How many bytes?)
+
+#### Boolean order
+b -> Choose between Little-endian (LE) or big-endian (BE)
+
+TODO specify default
+
+#### Binary encoding
+e -> Choose encoding for binary section: Base64 (default) or Base128
+
+TODO: specify format for Base128 representation (ASCII? UTF-7? anything else with 7 bits?)
+
+
+## Parsing to human-readable format like JSON
+> This section is incomplete and subject to change.
+
+The result would technically be a JSON lines file, where the first line describes the metadata and the following line describes the data.
