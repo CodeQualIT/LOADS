@@ -172,6 +172,44 @@ class EncoderKtTest {
     }
 
     @Test
+    fun `Encoding a byte`() {
+        // prepare
+        val obj = 123.toByte()
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"#1".toUByteArray(UTF_8),
+            *"ew".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding a short`() {
+        // prepare
+        val obj = 12345.toShort()
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"#2".toUByteArray(UTF_8),
+            *"MDk".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
     fun `Encoding an integer`() {
         // prepare
         val obj = 1234567890
@@ -184,25 +222,6 @@ class EncoderKtTest {
         val expected = ubyteArrayOf(
             0xFBu,
             *"#4".toUByteArray(UTF_8),
-            *"SZYC0g".toUByteArray(UTF_8),
-        )
-        assertThat(result1).containsSequence(expected)
-        assertThat(result2).containsSequence(expected)
-    }
-
-    @Test
-    fun `Encoding an unsigned integer`() {
-        // prepare
-        val obj = 1234567890u
-
-        // execute
-        val result1 = from(obj)
-        val result2 = obj.toLoads()
-
-        // verify
-        val expected = ubyteArrayOf(
-            0xFBu,
-            *"+4".toUByteArray(UTF_8),
             *"SZYC0g".toUByteArray(UTF_8),
         )
         assertThat(result1).containsSequence(expected)
@@ -223,6 +242,82 @@ class EncoderKtTest {
             0xFBu,
             *"#8".toUByteArray(UTF_8),
             *"ESIQ9H3pgRU".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding an unsigned byte`() {
+        // prepare
+        val obj = 123u.toUByte()
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"+1".toUByteArray(UTF_8),
+            *"ew".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding an unsigned byte over 128`() {
+        // prepare
+        val obj = 129u.toUByte()
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"+1".toUByteArray(UTF_8),
+            *"gQ".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding an unsigned short`() {
+        // prepare
+        val obj = 12345u.toUShort()
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"+2".toUByteArray(UTF_8),
+            *"MDk".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding an unsigned integer`() {
+        // prepare
+        val obj = 1234567890u
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"+4".toUByteArray(UTF_8),
+            *"SZYC0g".toUByteArray(UTF_8),
         )
         assertThat(result1).containsSequence(expected)
         assertThat(result2).containsSequence(expected)

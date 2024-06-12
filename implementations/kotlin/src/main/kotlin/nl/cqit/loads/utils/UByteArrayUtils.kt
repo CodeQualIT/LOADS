@@ -10,6 +10,17 @@ import kotlin.text.Charsets.UTF_8
 internal fun String.toUByteArray(charset: Charset): UByteArray =
     toByteArray(charset).toUByteArray()
 
+
+internal fun Byte.toUByteArray(): UByteArray =
+    ByteBuffer.allocate(Byte.SIZE_BYTES)
+        .put(this)
+        .toUByteArray()
+
+internal fun Short.toUByteArray(): UByteArray =
+    ByteBuffer.allocate(Short.SIZE_BYTES)
+        .putShort(this)
+        .toUByteArray()
+
 internal fun Int.toUByteArray(): UByteArray =
     ByteBuffer.allocate(Int.SIZE_BYTES)
         .putInt(this)
@@ -18,6 +29,17 @@ internal fun Int.toUByteArray(): UByteArray =
 internal fun Long.toUByteArray(): UByteArray =
     ByteBuffer.allocate(Long.SIZE_BYTES)
         .putLong(this)
+        .toUByteArray()
+
+
+internal fun UByte.toUByteArray(): UByteArray =
+    ByteBuffer.allocate(UByte.SIZE_BYTES)
+        .put(this.toByte())
+        .toUByteArray()
+
+internal fun UShort.toUByteArray(): UByteArray =
+    ByteBuffer.allocate(UShort.SIZE_BYTES)
+        .putShort(this.toShort())
         .toUByteArray()
 
 internal fun UInt.toUByteArray(): UByteArray =
@@ -40,15 +62,18 @@ internal fun Double.toUByteArray(): UByteArray =
         .putDouble(this)
         .toUByteArray()
 
-private fun UByteArray.toBase64(): String =
-    Base64.getUrlEncoder()
-        .withoutPadding()
-        .encodeToString(this.toByteArray())
-
 private fun ByteBuffer.toUByteArray(): UByteArray =
     this.array()
         .toUByteArray()
         .dropWhile { it == 0x0u.toUByte() }
         .toUByteArray()
-        .toBase64()
+        .toBase64UByteArray()
+
+internal fun UByteArray.toBase64UByteArray(): UByteArray =
+    this.toBase64()
         .toUByteArray(UTF_8)
+
+private fun UByteArray.toBase64(): String =
+    Base64.getUrlEncoder()
+        .withoutPadding()
+        .encodeToString(this.toByteArray())

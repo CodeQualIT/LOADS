@@ -5,9 +5,13 @@ package nl.cqit.loads
 import nl.cqit.loads.utils.toUByteArray
 import java.nio.charset.StandardCharsets.UTF_8
 
+internal val BYTE_TYPE = "#1".toUByteArray(UTF_8)
+internal val SHORT_TYPE = "#2".toUByteArray(UTF_8)
 internal val INT_TYPE = "#4".toUByteArray(UTF_8)
 internal val LONG_TYPE = "#8".toUByteArray(UTF_8)
 
+internal val UBYTE_TYPE = "+1".toUByteArray(UTF_8)
+internal val USHORT_TYPE = "+2".toUByteArray(UTF_8)
 internal val UINT_TYPE = "+4".toUByteArray(UTF_8)
 internal val ULONG_TYPE = "+8".toUByteArray(UTF_8)
 
