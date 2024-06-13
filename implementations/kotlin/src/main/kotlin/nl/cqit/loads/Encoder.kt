@@ -2,12 +2,11 @@
 
 package nl.cqit.loads
 
+import nl.cqit.loads.utils.*
 import nl.cqit.loads.utils.getProperties
 import nl.cqit.loads.utils.toBase64UByteArray
 import nl.cqit.loads.utils.toUByteArray
 import java.nio.charset.StandardCharsets.UTF_8
-import kotlin.reflect.KFunction
-import kotlin.reflect.full.functions
 
 fun Any?.toLoads(): UByteArray = from(this)
 
@@ -28,37 +27,13 @@ fun from(kotlinObject: Any?): UByteArray {
         is Float -> fromFloat(kotlinObject)
         is Double -> fromDouble(kotlinObject)
         is Boolean -> fromBoolean(kotlinObject)
+        kotlinObject.takeIf { hasToUByteArrayMethod(it) } ->
+            fromUByteArray(kotlinObject.javaClass.simpleName, callToUByteArrayMethod(kotlinObject))
+        kotlinObject.takeIf { hasToByteArrayMethod(it) } ->
+            fromByteArray(kotlinObject.javaClass.simpleName, callToByteArrayMethod(kotlinObject))
         else -> throw IllegalArgumentException("Unsupported type: ${kotlinObject::class}")
     }
 }
-
-private fun callToByteArrayMethod(kotlinObject: Any) =
-    kotlinObject.javaClass.kotlin.functions
-        .first(::containsToByteArrayFunction)
-        .call(kotlinObject) as ByteArray
-
-private fun hasToByteArrayMethod(kotlinObject: Any) =
-    kotlinObject.javaClass.kotlin.functions
-        .any(::containsToByteArrayFunction)
-
-private fun containsToByteArrayFunction(it: KFunction<*>) =
-    it.name == "toByteArray"
-            && it.parameters.isEmpty()
-            && it.returnType.classifier == ByteArray::class
-
-private fun callToUByteArrayMethod(kotlinObject: Any) =
-    kotlinObject.javaClass.kotlin.functions
-        .first(::containsToUByteArrayFunction)
-        .call(kotlinObject) as UByteArray
-
-private fun hasToUByteArrayMethod(kotlinObject: Any) =
-    kotlinObject.javaClass.kotlin.functions
-        .any(::containsToUByteArrayFunction)
-
-private fun containsToUByteArrayFunction(it: KFunction<*>) =
-    it.name == "toUByteArray"
-            && it.parameters.isEmpty()
-            && it.returnType.classifier == UByteArray::class
 
 
 private fun fromArray(array: Array<*>) = ubyteArrayOf(
@@ -94,3 +69,13 @@ private fun fromFloat(float: Float): UByteArray = ubyteArrayOf(0xFBu,  *FLOAT_TY
 private fun fromDouble(double: Double): UByteArray = ubyteArrayOf(0xFBu,  *DOUBLE_TYPE, *double.toUByteArray())
 
 private fun fromBoolean(boolean: Boolean): UByteArray = ubyteArrayOf(0xFBu, *if (boolean) TRUE_TYPE else FALSE_TYPE)
+
+fun ByteArray.toLoads(type: String): UByteArray = fromByteArray(type, this)
+fun fromUByteArray(type: String, byteArray: UByteArray): UByteArray = ubyteArrayOf(
+    0xFBu, *("(${type})").toUByteArray(UTF_8), *byteArray.toBase64UByteArray()
+)
+
+fun UByteArray.toLoads(type: String): UByteArray = fromUByteArray(type, this)
+fun fromByteArray(type: String, byteArray: ByteArray): UByteArray = ubyteArrayOf(
+    0xFBu, *("(${type})").toUByteArray(UTF_8), *byteArray.toUByteArray().toBase64UByteArray()
+)

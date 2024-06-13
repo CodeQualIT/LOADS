@@ -114,6 +114,7 @@ class EncoderKtTest {
     fun `Encoding a data class`() {
         // prepare
         data class Data(val firstName: String, val lastName: String)
+
         val obj = Data("John", "Doe")
 
         // execute
@@ -141,6 +142,7 @@ class EncoderKtTest {
         // prepare
         data class Address(val street: String, val city: String)
         data class Person(val name: String, val address: Address)
+
         val obj = Person("John", Address("Main Street", "New York"))
 
         // execute
@@ -411,6 +413,90 @@ class EncoderKtTest {
         val expected = ubyteArrayOf(
             0xFBu,
             *"!f".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding an object with a toByteArray method`() {
+        // prepare
+        class Test {
+            fun toByteArray() = byteArrayOf(0x01, 0x02, 0x03)
+        }
+
+        val obj = Test()
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"(Test)".toUByteArray(UTF_8),
+            *"AQID".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding an object with a toUByteArray method`() {
+        // prepare
+        class Test {
+            fun toUByteArray() = ubyteArrayOf(0x01u, 0x02u, 0x03u)
+        }
+
+        val obj = Test()
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"(Test)".toUByteArray(UTF_8),
+            *"AQID".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding a ByteArray object`() {
+        // prepare
+        val obj = byteArrayOf(0x01, 0x02, 0x03)
+
+        // execute
+        val result1 = fromByteArray("test", obj)
+        val result2 = obj.toLoads("test")
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"(test)".toUByteArray(UTF_8),
+            *"AQID".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding a UByteArray object`() {
+        // prepare
+        val obj = ubyteArrayOf(0x01u, 0x02u, 0x03u)
+
+        // execute
+        val result1 = fromUByteArray("test", obj)
+        val result2 = obj.toLoads("test")
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"(test)".toUByteArray(UTF_8),
+            *"AQID".toUByteArray(UTF_8),
         )
         assertThat(result1).containsSequence(expected)
         assertThat(result2).containsSequence(expected)
