@@ -165,8 +165,13 @@ it can be used to indicate the type of the binary data.
 #### Integers
 Integers are binary data that represent a number. They can be signed or unsigned. 
 
-The type can be indicated by prefixing the base64 encoded string with `#4` or `+4` for a 4-byte (32-bit) signed or unsigned integer, 
-or `#8` or `+8` for an 8-byte (64-bit) signed or unsigned integer.
+The type can be indicated by prefixing the base64 encoded string with 
+`#1` or `+1` for a 1-byte (8-bit) signed or unsigned integer, 
+`#2` or `+2` for a 2-byte (16-bit) signed or unsigned integer, 
+`#4` or `+4` for a 4-byte (32-bit) signed or unsigned integer, 
+or `#8` or `+8` for an 8-byte (64-bit) signed or unsigned integer respectively.
+
+Any zero bytes at the start of the binary data can be omitted, since they don't change the value.
 
 Example:
 ```json
@@ -196,12 +201,17 @@ Is encoded as:
 
 #### Dates
 Dates are binary data that represent a date and/or time. They can be represented in many different ways,
-but the most common way is to use the Unix timestamp.
+but the most common way is to use the Epoch timestamp, which is the time since `1970-01-01 00:00:00`.
 If date formatting and time zones are important, it is recommended to use a string instead of binary data.
 
-The type can be indicated by `@4` for a 4-byte (32-bit) Unix timestamp, or `@8` for an 8-byte (64-bit) Unix timestamp.
+The type can be indicated by `@4` for a 4-byte (32-bit) timestamp giving the seconds since the epoch, 
+`@8` for an 8-byte (64-bit) timestamp, given in milliseconds since the epoch,
+or `@C` or `@c` (c is hex for 12) for a 12-byte (96-bit) timestamp, given in nanoseconds since the epoch 
+(where the upper 8 bytes are the seconds and the lower 4 bytes are the nanosecond fraction).
 
-Example:
+Any zero bytes at the start of the binary data can be omitted, since they don't change the value.
+
+Example 1:
 ```json
 {"start": 1717967811}
 ```
@@ -209,6 +219,16 @@ Is encoded as:
 ```
 252 | 115 116 97 114 116 | 255 | 251 | 64 52 | 90 109 89 98 119 119 | 254
  {  |       start        | :   |<bin>|  @4   |        ZmYbww        |  }
+```
+
+Example 2:
+```json
+{"start": [1718315521, 191598900]}
+```
+Is encoded as:
+```
+252 | 115 116 97 114 116 | 255 | 251 | 64 67 | 66 109 97 50 111 66 116 114 107 84 81 | 254
+ {  |       start        | :   |<bin>|  @C   |              Bma2oBtrkTQ              |  }
 ```
 
 #### Booleans
