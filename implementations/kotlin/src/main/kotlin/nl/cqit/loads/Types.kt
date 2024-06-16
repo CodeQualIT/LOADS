@@ -18,7 +18,9 @@ internal val ULONG_TYPE = "+8".toUByteArray(UTF_8)
 internal val FLOAT_TYPE = "~4".toUByteArray(UTF_8)
 internal val DOUBLE_TYPE = "~8".toUByteArray(UTF_8)
 
-internal val TIMESTAMP_TYPE = "@8".toUByteArray(UTF_8)
+internal val TIMESTAMP4_TYPE = "@4".toUByteArray(UTF_8)
+internal val TIMESTAMP8_TYPE = "@8".toUByteArray(UTF_8)
+internal val TIMESTAMP12_TYPE = "@C".toUByteArray(UTF_8)
 
 internal val TRUE_TYPE = "!t".toUByteArray(UTF_8)
 internal val FALSE_TYPE = "!f".toUByteArray(UTF_8)

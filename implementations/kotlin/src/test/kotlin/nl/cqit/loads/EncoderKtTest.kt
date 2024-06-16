@@ -5,6 +5,8 @@ package nl.cqit.loads
 import nl.cqit.loads.utils.toUByteArray
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.Instant
+import java.time.ZoneOffset
 import kotlin.text.Charsets.UTF_8
 
 class EncoderKtTest {
@@ -497,6 +499,65 @@ class EncoderKtTest {
             0xFBu,
             *"(test)".toUByteArray(UTF_8),
             *"AQID".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding an Instant object`() {
+        // prepare
+        val obj = Instant.ofEpochSecond(1718315521, 191598900)
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"@C".toUByteArray(UTF_8),
+            *"ZmtqAQtrkTQ".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding an OffsetDateTime object`() {
+        // prepare
+        val obj = Instant.ofEpochSecond(1718315521, 191598900)
+            .atOffset(ZoneOffset.UTC)
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"@C".toUByteArray(UTF_8),
+            *"ZmtqAQtrkTQ".toUByteArray(UTF_8),
+        )
+        assertThat(result1).containsSequence(expected)
+        assertThat(result2).containsSequence(expected)
+    }
+
+    @Test
+    fun `Encoding a ZonedDateTime object`() {
+        // prepare
+        val obj = Instant.ofEpochSecond(1718315521, 191598900)
+            .atZone(ZoneOffset.UTC)
+
+        // execute
+        val result1 = from(obj)
+        val result2 = obj.toLoads()
+
+        // verify
+        val expected = ubyteArrayOf(
+            0xFBu,
+            *"@C".toUByteArray(UTF_8),
+            *"ZmtqAQtrkTQ".toUByteArray(UTF_8),
         )
         assertThat(result1).containsSequence(expected)
         assertThat(result2).containsSequence(expected)
