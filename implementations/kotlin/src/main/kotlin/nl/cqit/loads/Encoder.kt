@@ -18,6 +18,7 @@ fun from(kotlinObject: Any?): UByteArray {
         null -> fromNull()
         is String -> fromString(kotlinObject)
         is Array<*> -> fromArray(kotlinObject)
+        is Collection<*> -> fromArray(kotlinObject.toTypedArray())
         kotlinObject.takeIf { it::class.isData } -> fromDataClass(kotlinObject)
         is Byte -> fromByte(kotlinObject)
         is Short -> fromShort(kotlinObject)
