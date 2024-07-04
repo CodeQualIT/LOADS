@@ -2,8 +2,13 @@
 
 package nl.cqit.loads
 
+import nl.cqit.loads.utils.andThen
 import nl.cqit.loads.utils.toUByteArray
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import kotlin.reflect.*
+import kotlin.reflect.full.cast
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.text.Charsets.UTF_8
@@ -103,6 +108,37 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
     return newOffset to result
 }
 
+private fun Array<*>.castArray(subType: KType): Array<*> = when {
+    subType.isSubtypeOf(typeOf<Array<*>>()) -> map { it as Array<*> }
+        .map { castArray(elemType(subType)) }
+        .toTypedArray()
+
+    subType.classifier == List::class -> map { it as List<*> }.toTypedArray()
+    subType.classifier == Set::class -> map { it as Set<*> }.toTypedArray()
+    subType.classifier == Collection::class -> map { it as Collection<*> }.toTypedArray()
+    subType.classifier == Map::class -> map { it as Map<*, *> }.toTypedArray()
+    subType.classifier == String::class -> map { it as String }.toTypedArray()
+    isData(subType.classifier) -> map((subType.classifier!! as KClass<*>)::cast).toTypedArray()
+    subType.classifier == ByteArray::class -> map { it as ByteArray }.toTypedArray()
+    subType.classifier == UByteArray::class -> map { it as UByteArray }.toTypedArray()
+    subType.classifier == String::class -> map { it as String }.toTypedArray()
+    subType.classifier == Byte::class -> map { it as Byte }.toTypedArray()
+    subType.classifier == Short::class -> map { it as Short }.toTypedArray()
+    subType.classifier == Int::class -> map { it as Int }.toTypedArray()
+    subType.classifier == Long::class -> map { it as Long }.toTypedArray()
+    subType.classifier == UByte::class -> map { it as UByte }.toTypedArray()
+    subType.classifier == UShort::class -> map { it as UShort }.toTypedArray()
+    subType.classifier == UInt::class -> map { it as UInt }.toTypedArray()
+    subType.classifier == ULong::class -> map { it as ULong }.toTypedArray()
+    subType.classifier == Float::class -> map { it as Float }.toTypedArray()
+    subType.classifier == Double::class -> map { it as Double }.toTypedArray()
+    subType.classifier == Boolean::class -> map { it as Boolean }.toTypedArray()
+    subType.classifier == Instant::class -> map { it as Instant }.toTypedArray()
+    subType.classifier == OffsetDateTime::class -> map { it as OffsetDateTime }.toTypedArray()
+    subType.classifier == ZonedDateTime::class -> map { it as ZonedDateTime }.toTypedArray()
+    else -> throw NotImplementedError()
+}
+
 private fun isData(classifier: KClassifier?): Boolean =
     classifier is KClass<*> && classifier.isData
 
@@ -112,7 +148,7 @@ private fun toString(data: UByteArray, offset: Int): Pair<Int, String> {
     while (i < data.size && data[i] !in VALUE_TERMINATORS) i++
     val slice = data.sliceArray(offset until i)
     val specialCharactersInString = slice.intersect(SPECIAL_BYTES)
-    require (specialCharactersInString.isEmpty()) {
+    require(specialCharactersInString.isEmpty()) {
         val invalidCharacters = specialCharactersInString.map {
             val hex = it.toHexString(HexFormat.UpperCase)
             val pos = slice.indexOf(it) + offset
@@ -123,25 +159,26 @@ private fun toString(data: UByteArray, offset: Int): Pair<Int, String> {
     return i to String(slice.toByteArray())
 }
 
-private fun toArray(elementType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>> =
-    toArrayContainer(elementType, data, offset, MutableList<*>::toTypedArray)
+private fun toArray(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>> =
+    toArrayContainer(containerType, data, offset, MutableList<*>::toTypedArray
+        .andThen { castArray(elemType(containerType)) })
 
-private fun toList(elementType: KType, data: UByteArray, offset: Int): Pair<Int, List<*>> =
-    toArrayContainer(elementType, data, offset, MutableList<*>::toList)
+private fun toList(containerType: KType, data: UByteArray, offset: Int): Pair<Int, List<*>> =
+    toArrayContainer(containerType, data, offset, MutableList<*>::toList)
 
-private fun toSet(elementType: KType, data: UByteArray, offset: Int): Pair<Int, Set<*>> =
-    toArrayContainer(elementType, data, offset, MutableList<*>::toSet)
+private fun toSet(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Set<*>> =
+    toArrayContainer(containerType, data, offset, MutableList<*>::toSet)
 
 private fun toCollection(
-    elementType: KType,
+    containerType: KType,
     data: UByteArray,
     offset: Int
 ): Pair<Int, Collection<*>> =
-    toArrayContainer(elementType, data, offset, MutableList<*>::toList)
+    toArrayContainer(containerType, data, offset, MutableList<*>::toList)
 
-private fun toMap(type: KType, data: UByteArray, offset: Int): Pair<Int, Map<*, *>> {
+private fun toMap(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Map<*, *>> {
     return toObjectContainer(
-        keyType(type), { it }, { valueType(type) },
+        keyType(containerType), { it }, { valueType(containerType) },
         data, offset, MutableMap<*, *>::toMap
     )
 }
@@ -156,7 +193,7 @@ private fun toData(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
 }
 
 private operator fun List<KParameter>.get(key: Any?) =
-    this.firstOrNull { it.name == key }
+    firstOrNull { it.name == key }
         ?: throw IllegalArgumentException("Unknown key found: $key")
 
 
@@ -166,7 +203,7 @@ private fun <T> toArrayContainer(
     offset: Int,
     containerMapper: (MutableList<*>) -> T
 ): Pair<Int, T> {
-    require (data[offset] == ARRAY_START) { INVALID_ARRAY_START_MSG + offset }
+    require(data[offset] == ARRAY_START) { INVALID_ARRAY_START_MSG + offset }
     val list = mutableListOf<Any?>()
     var i = offset + 1
     while (true) {
