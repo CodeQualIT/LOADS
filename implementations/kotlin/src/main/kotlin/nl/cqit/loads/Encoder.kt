@@ -105,7 +105,7 @@ fun fromInstant(instant: Instant ): UByteArray {
 }
 
 private fun Instant.toBigInteger() =
-    this.epochSecond.toBigInteger().shiftLeft(32) + this.nano.toBigInteger()
+    epochSecond.toBigInteger().shiftLeft(32) + nano.toBigInteger()
 
 fun fromOffsetDateTime(odt: OffsetDateTime): UByteArray = fromInstant(odt.toInstant())
 fun fromZonedDateTime(zdt: ZonedDateTime): UByteArray = fromInstant(zdt.toInstant())
