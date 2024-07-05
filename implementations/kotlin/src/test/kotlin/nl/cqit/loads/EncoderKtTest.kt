@@ -22,7 +22,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFDu
+            NULL_VALUE
         )
         assertThat(result1).containsSequence(expected)
         assertThat(result2).containsSequence(expected)
@@ -100,13 +100,13 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFAu,
+            ARRAY_START,
             *"Hello".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"World".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"🌎".toUByteArray(UTF_8),
-            0xFEu
+            CONTAINER_END
         )
         assertThat(result1).containsSequence(expected)
         assertThat(result2).containsSequence(expected)
@@ -125,15 +125,15 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFCu,
+            OBJECT_START,
             *"firstName".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"John".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"lastName".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"Doe".toUByteArray(UTF_8),
-            0xFEu
+            CONTAINER_END
         )
         assertThat(result1).containsSequence(expected)
         assertThat(result2).containsSequence(expected)
@@ -153,23 +153,23 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFCu,
+            OBJECT_START,
               *"address".toUByteArray(UTF_8),
-              0xFFu,
-              0xFCu,
+              ELEMENT_SEPARATOR,
+              OBJECT_START,
                 *"city".toUByteArray(UTF_8),
-                0xFFu,
+                ELEMENT_SEPARATOR,
                 *"New York".toUByteArray(UTF_8),
-                0xFFu,
+                ELEMENT_SEPARATOR,
                 *"street".toUByteArray(UTF_8),
-                0xFFu,
+                ELEMENT_SEPARATOR,
                 *"Main Street".toUByteArray(UTF_8),
-              0xFEu,
-              0xFFu,
+              CONTAINER_END,
+              ELEMENT_SEPARATOR,
               *"name".toUByteArray(UTF_8),
-              0xFFu,
+              ELEMENT_SEPARATOR,
               *"John".toUByteArray(UTF_8),
-            0xFEu
+            CONTAINER_END
         )
         assertThat(result1).containsSequence(expected)
         assertThat(result2).containsSequence(expected)
@@ -186,7 +186,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"#1".toUByteArray(UTF_8),
             *"ew".toUByteArray(UTF_8),
         )
@@ -205,7 +205,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"#2".toUByteArray(UTF_8),
             *"MDk".toUByteArray(UTF_8),
         )
@@ -224,7 +224,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"#4".toUByteArray(UTF_8),
             *"SZYC0g".toUByteArray(UTF_8),
         )
@@ -243,7 +243,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"#8".toUByteArray(UTF_8),
             *"ESIQ9H3pgRU".toUByteArray(UTF_8),
         )
@@ -262,7 +262,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"+1".toUByteArray(UTF_8),
             *"ew".toUByteArray(UTF_8),
         )
@@ -281,7 +281,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"+1".toUByteArray(UTF_8),
             *"gQ".toUByteArray(UTF_8),
         )
@@ -300,7 +300,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"+2".toUByteArray(UTF_8),
             *"MDk".toUByteArray(UTF_8),
         )
@@ -319,7 +319,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"+4".toUByteArray(UTF_8),
             *"SZYC0g".toUByteArray(UTF_8),
         )
@@ -338,7 +338,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"+8".toUByteArray(UTF_8),
             *"ESIQ9H3pgRU".toUByteArray(UTF_8),
         )
@@ -357,7 +357,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"~4".toUByteArray(UTF_8),
             *"QEkP2w".toUByteArray(UTF_8),
         )
@@ -376,7 +376,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"~8".toUByteArray(UTF_8),
             *"QAkh-1RELRg".toUByteArray(UTF_8),
         )
@@ -395,7 +395,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"!t".toUByteArray(UTF_8),
         )
         assertThat(result1).containsSequence(expected)
@@ -413,7 +413,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"!f".toUByteArray(UTF_8),
         )
         assertThat(result1).containsSequence(expected)
@@ -435,7 +435,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"(Test)".toUByteArray(UTF_8),
             *"AQID".toUByteArray(UTF_8),
         )
@@ -458,7 +458,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"(Test)".toUByteArray(UTF_8),
             *"AQID".toUByteArray(UTF_8),
         )
@@ -477,7 +477,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"(test)".toUByteArray(UTF_8),
             *"AQID".toUByteArray(UTF_8),
         )
@@ -496,7 +496,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"(test)".toUByteArray(UTF_8),
             *"AQID".toUByteArray(UTF_8),
         )
@@ -515,7 +515,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"@C".toUByteArray(UTF_8),
             *"ZmtqAQtrkTQ".toUByteArray(UTF_8),
         )
@@ -535,7 +535,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"@C".toUByteArray(UTF_8),
             *"ZmtqAQtrkTQ".toUByteArray(UTF_8),
         )
@@ -555,7 +555,7 @@ class EncoderKtTest {
 
         // verify
         val expected = ubyteArrayOf(
-            0xFBu,
+            BINARY_VALUE,
             *"@C".toUByteArray(UTF_8),
             *"ZmtqAQtrkTQ".toUByteArray(UTF_8),
         )

@@ -26,13 +26,13 @@ class DecoderKtTest {
     fun `decode list of strings`() {
         // prepare
         val input = ubyteArrayOf(
-            0xFAu,
+            ARRAY_START,
             *"123".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"456".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"789".toUByteArray(UTF_8),
-            0xFEu,
+            CONTAINER_END,
         )
 
         // execute
@@ -47,13 +47,13 @@ class DecoderKtTest {
     fun `decode set of strings`() {
         // prepare
         val input = ubyteArrayOf(
-            0xFAu,
+            ARRAY_START,
             *"123".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"456".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"789".toUByteArray(UTF_8),
-            0xFEu,
+            CONTAINER_END,
         )
 
         // execute
@@ -68,13 +68,13 @@ class DecoderKtTest {
     fun `decode collection of strings`() {
         // prepare
         val input = ubyteArrayOf(
-            0xFAu,
+            ARRAY_START,
             *"123".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"456".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"789".toUByteArray(UTF_8),
-            0xFEu,
+            CONTAINER_END,
         )
 
         // execute
@@ -91,11 +91,11 @@ class DecoderKtTest {
     fun `decode map of strings`() {
         // prepare
         val input = ubyteArrayOf(
-            0xFCu,
+            OBJECT_START,
             *"map".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"123".toUByteArray(UTF_8),
-            0xFEu,
+            CONTAINER_END,
         )
 
         // execute
@@ -110,15 +110,15 @@ class DecoderKtTest {
     fun `decode map of list of strings`() {
         // prepare
         val input = ubyteArrayOf(
-            0xFCu,
+            OBJECT_START,
             *"arr".toUByteArray(UTF_8),
-            0xFFu,
-            0xFAu,
+            ELEMENT_SEPARATOR,
+            ARRAY_START,
             *"123".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"456".toUByteArray(UTF_8),
-            0xFEu,
-            0xFEu
+            CONTAINER_END,
+            CONTAINER_END
         )
 
         // execute
@@ -130,16 +130,78 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode data class`() {
+        // prepare
+        data class Obj(
+            val str: String,
+        )
+
+        val input = ubyteArrayOf(
+            OBJECT_START,
+            *"str".toUByteArray(UTF_8),
+            ELEMENT_SEPARATOR,
+            *"123".toUByteArray(UTF_8),
+            CONTAINER_END
+        )
+
+        // execute
+        val actual: Obj = decode(input)
+
+        // verify
+        val expected = Obj("123")
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode complex data class`() {
+        // prepare
+        data class Obj(
+            val map: Map<String, String>,
+            val arr: List<String>
+        )
+
+        val input = ubyteArrayOf(
+            OBJECT_START,
+            *"map".toUByteArray(UTF_8),
+            ELEMENT_SEPARATOR,
+            OBJECT_START,
+            *"456".toUByteArray(UTF_8),
+            ELEMENT_SEPARATOR,
+            *"789".toUByteArray(UTF_8),
+            CONTAINER_END,
+            ELEMENT_SEPARATOR,
+            *"arr".toUByteArray(UTF_8),
+            ELEMENT_SEPARATOR,
+            ARRAY_START,
+            *"123".toUByteArray(UTF_8),
+            ELEMENT_SEPARATOR,
+            *"456".toUByteArray(UTF_8),
+            CONTAINER_END,
+            CONTAINER_END
+        )
+
+        // execute
+        val actual: Obj = decode(input)
+
+        // verify
+        val expected = Obj(
+            map = mapOf("456" to "789"),
+            arr = listOf("123", "456")
+        )
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
     fun `decode array of strings`() {
         // prepare
         val input = ubyteArrayOf(
-            0xFAu,
+            ARRAY_START,
             *"123".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"456".toUByteArray(UTF_8),
-            0xFFu,
+            ELEMENT_SEPARATOR,
             *"789".toUByteArray(UTF_8),
-            0xFEu,
+            CONTAINER_END,
         )
 
         // execute
@@ -149,4 +211,6 @@ class DecoderKtTest {
         val expected = arrayOf("123", "456", "789")
         assertThat(actual).isEqualTo(expected)
     }
+
+    // todo: add more array tests
 }

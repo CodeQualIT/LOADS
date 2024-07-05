@@ -3,7 +3,6 @@
 package nl.cqit.loads
 
 import nl.cqit.loads.utils.andThen
-import nl.cqit.loads.utils.toUByteArray
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZonedDateTime
@@ -11,7 +10,6 @@ import kotlin.reflect.*
 import kotlin.reflect.full.cast
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.primaryConstructor
-import kotlin.text.Charsets.UTF_8
 
 private const val INVALID_STRING_CHARACTER_MSG = "Invalid character(s) found in string value: "
 private const val INVALID_ARRAY_START_MSG = "Invalid start of array container at position "
@@ -19,58 +17,33 @@ private const val INVALID_OBJECT_START_MSG = "Invalid start of object container 
 private const val EXPECTED_ELEMENT_SEPARATOR_MSG =
     "Unexpected character found. Expected to find an element separator at position "
 
-private const val ARRAY_START: UByte = 0xFAu
-private const val BINARY_VALUE: UByte = 0xFBu
-private const val OBJECT_START: UByte = 0xFCu
-private const val NULL_VALUE: UByte = 0xFDu
-private const val CONTAINER_END: UByte = 0xFEu
-private const val ELEMENT_SEPARATOR: UByte = 0xFFu
-
-private val SPECIAL_BYTES = ubyteArrayOf(
-    ARRAY_START,
-    BINARY_VALUE,
-    OBJECT_START,
-    NULL_VALUE,
-    CONTAINER_END,
-    ELEMENT_SEPARATOR
-)
-private val VALUE_TERMINATORS = ubyteArrayOf(
-    ELEMENT_SEPARATOR,
-    CONTAINER_END
-)
-
 private fun elemType(type: KType) = type.arguments[0].type!!
 private fun keyType(type: KType) = type.arguments[0].type!!
 private fun valueType(type: KType) = type.arguments[1].type!!
 
-data class Obj(
-    val map: Map<String, String>,
-    val arr: List<String>
-)
-
-fun main() {
-    val data = ubyteArrayOf(
-        0xFCu,
-        *"map".toUByteArray(UTF_8),
-        0xFFu,
-        0xFCu,
-        0x34u, 0x35u, 0x36u,
-        0xFFu,
-        0x37u, 0x38u, 0x39u,
-        0xFEu,
-        0xFFu,
-        *"arr".toUByteArray(UTF_8),
-        0xFFu,
-        0xFAu,
-        0x31u, 0x32u, 0x33u,
-        0xFFu,
-        0x34u, 0x35u, 0x36u,
-        0xFEu,
-        0xFEu
-    )
-    val result: Obj = decode(data)
-    println(result)
-}
+//fun main() {
+//    val data = ubyteArrayOf(
+//        0xFCu,
+//        *"map".toUByteArray(UTF_8),
+//        0xFFu,
+//        0xFCu,
+//        0x34u, 0x35u, 0x36u,
+//        0xFFu,
+//        0x37u, 0x38u, 0x39u,
+//        0xFEu,
+//        0xFFu,
+//        *"arr".toUByteArray(UTF_8),
+//        0xFFu,
+//        0xFAu,
+//        0x31u, 0x32u, 0x33u,
+//        0xFFu,
+//        0x34u, 0x35u, 0x36u,
+//        0xFEu,
+//        0xFEu
+//    )
+//    val result: Obj = decode(data)
+//    println(result)
+//}
 
 inline fun <reified T : Any> decode(data: UByteArray): T {
     val type = typeOf<T>()
