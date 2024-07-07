@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package nl.cqit.loads
+package nl.cqit.loads.model
 
 
 internal const val ARRAY_START: UByte = 0xFAu

@@ -4,12 +4,18 @@ package nl.cqit.loads.utils
 
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
-import java.util.*
-import kotlin.text.Charsets.UTF_8
+import java.time.Instant
 
 internal fun String.toUByteArray(charset: Charset): UByteArray =
-    toByteArray(charset).toUByteArray()
+    toByteArray(charset)
+        .toUByteArray()
 
+internal fun Instant.toUByteArray() =
+    epochSecond.toBigInteger()
+        .shiftLeft(32)
+        .add(nano.toBigInteger())
+        .toByteArray()
+        .toUByteArray()
 
 internal fun Byte.toUByteArray(): UByteArray =
     ByteBuffer.allocate(Byte.SIZE_BYTES)
@@ -67,13 +73,3 @@ private fun ByteBuffer.toUByteArray(): UByteArray =
         .toUByteArray()
         .dropWhile { it == 0x0u.toUByte() }
         .toUByteArray()
-        .toBase64UByteArray()
-
-internal fun UByteArray.toBase64UByteArray(): UByteArray =
-    this.toBase64()
-        .toUByteArray(UTF_8)
-
-private fun UByteArray.toBase64(): String =
-    Base64.getUrlEncoder()
-        .withoutPadding()
-        .encodeToString(this.toByteArray())

@@ -2,48 +2,21 @@
 
 package nl.cqit.loads
 
+import nl.cqit.loads.model.INVALID_STRING_CHARACTER_MSG
+import nl.cqit.loads.model.SPECIAL_BYTES
+import nl.cqit.loads.model.VALUE_TERMINATORS
 import nl.cqit.loads.utils.andThen
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZonedDateTime
+import nl.cqit.loads.utils.cast
+import nl.cqit.loads.utils.elemType
+import nl.cqit.loads.utils.get
+import nl.cqit.loads.utils.isData
+import nl.cqit.loads.utils.keyType
+import nl.cqit.loads.utils.toArrayContainer
+import nl.cqit.loads.utils.toObjectContainer
+import nl.cqit.loads.utils.valueType
 import kotlin.reflect.*
-import kotlin.reflect.full.cast
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.primaryConstructor
-
-private const val INVALID_STRING_CHARACTER_MSG = "Invalid character(s) found in string value: "
-private const val INVALID_ARRAY_START_MSG = "Invalid start of array container at position "
-private const val INVALID_OBJECT_START_MSG = "Invalid start of object container at position "
-private const val EXPECTED_ELEMENT_SEPARATOR_MSG =
-    "Unexpected character found. Expected to find an element separator at position "
-
-private fun elemType(type: KType) = type.arguments[0].type!!
-private fun keyType(type: KType) = type.arguments[0].type!!
-private fun valueType(type: KType) = type.arguments[1].type!!
-
-//fun main() {
-//    val data = ubyteArrayOf(
-//        0xFCu,
-//        *"map".toUByteArray(UTF_8),
-//        0xFFu,
-//        0xFCu,
-//        0x34u, 0x35u, 0x36u,
-//        0xFFu,
-//        0x37u, 0x38u, 0x39u,
-//        0xFEu,
-//        0xFFu,
-//        *"arr".toUByteArray(UTF_8),
-//        0xFFu,
-//        0xFAu,
-//        0x31u, 0x32u, 0x33u,
-//        0xFFu,
-//        0x34u, 0x35u, 0x36u,
-//        0xFEu,
-//        0xFEu
-//    )
-//    val result: Obj = decode(data)
-//    println(result)
-//}
 
 inline fun <reified T : Any> decode(data: UByteArray): T {
     val type = typeOf<T>()
@@ -81,40 +54,6 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
     return newOffset to result
 }
 
-private fun Array<*>.castArray(subType: KType): Array<*> = when {
-    subType.isSubtypeOf(typeOf<Array<*>>()) -> map { it as Array<*> }
-        .map { castArray(elemType(subType)) }
-        .toTypedArray()
-
-    subType.classifier == List::class -> map { it as List<*> }.toTypedArray()
-    subType.classifier == Set::class -> map { it as Set<*> }.toTypedArray()
-    subType.classifier == Collection::class -> map { it as Collection<*> }.toTypedArray()
-    subType.classifier == Map::class -> map { it as Map<*, *> }.toTypedArray()
-    subType.classifier == String::class -> map { it as String }.toTypedArray()
-    isData(subType.classifier) -> map((subType.classifier!! as KClass<*>)::cast).toTypedArray()
-    subType.classifier == ByteArray::class -> map { it as ByteArray }.toTypedArray()
-    subType.classifier == UByteArray::class -> map { it as UByteArray }.toTypedArray()
-    subType.classifier == String::class -> map { it as String }.toTypedArray()
-    subType.classifier == Byte::class -> map { it as Byte }.toTypedArray()
-    subType.classifier == Short::class -> map { it as Short }.toTypedArray()
-    subType.classifier == Int::class -> map { it as Int }.toTypedArray()
-    subType.classifier == Long::class -> map { it as Long }.toTypedArray()
-    subType.classifier == UByte::class -> map { it as UByte }.toTypedArray()
-    subType.classifier == UShort::class -> map { it as UShort }.toTypedArray()
-    subType.classifier == UInt::class -> map { it as UInt }.toTypedArray()
-    subType.classifier == ULong::class -> map { it as ULong }.toTypedArray()
-    subType.classifier == Float::class -> map { it as Float }.toTypedArray()
-    subType.classifier == Double::class -> map { it as Double }.toTypedArray()
-    subType.classifier == Boolean::class -> map { it as Boolean }.toTypedArray()
-    subType.classifier == Instant::class -> map { it as Instant }.toTypedArray()
-    subType.classifier == OffsetDateTime::class -> map { it as OffsetDateTime }.toTypedArray()
-    subType.classifier == ZonedDateTime::class -> map { it as ZonedDateTime }.toTypedArray()
-    else -> throw NotImplementedError()
-}
-
-private fun isData(classifier: KClassifier?): Boolean =
-    classifier is KClass<*> && classifier.isData
-
 
 private fun toString(data: UByteArray, offset: Int): Pair<Int, String> {
     var i = offset
@@ -133,26 +72,21 @@ private fun toString(data: UByteArray, offset: Int): Pair<Int, String> {
 }
 
 private fun toArray(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>> =
-    toArrayContainer(containerType, data, offset, MutableList<*>::toTypedArray
-        .andThen { castArray(elemType(containerType)) })
+    toArrayContainer(containerType, MutableList<*>::toTypedArray.andThen { cast(containerType.elemType()) }, data, offset)
 
 private fun toList(containerType: KType, data: UByteArray, offset: Int): Pair<Int, List<*>> =
-    toArrayContainer(containerType, data, offset, MutableList<*>::toList)
+    toArrayContainer(containerType, MutableList<*>::toList, data, offset)
 
 private fun toSet(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Set<*>> =
-    toArrayContainer(containerType, data, offset, MutableList<*>::toSet)
+    toArrayContainer(containerType, MutableList<*>::toSet, data, offset)
 
-private fun toCollection(
-    containerType: KType,
-    data: UByteArray,
-    offset: Int
-): Pair<Int, Collection<*>> =
-    toArrayContainer(containerType, data, offset, MutableList<*>::toList)
+private fun toCollection(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Collection<*>> =
+    toArrayContainer(containerType, MutableList<*>::toList, data, offset)
 
 private fun toMap(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Map<*, *>> {
     return toObjectContainer(
-        keyType(containerType), { it }, { valueType(containerType) },
-        data, offset, MutableMap<*, *>::toMap
+        containerType.keyType(), { it }, { containerType.valueType() },
+        MutableMap<*, *>::toMap, data, offset
     )
 }
 
@@ -161,66 +95,8 @@ private fun toData(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
     val constructor = dataClass.primaryConstructor!!
     return toObjectContainer(
         typeOf<String>(), constructor.parameters::get, KParameter::type,
-        data, offset, constructor::callBy
+        constructor::callBy, data, offset
     )
 }
 
-private operator fun List<KParameter>.get(key: Any?) =
-    firstOrNull { it.name == key }
-        ?: throw IllegalArgumentException("Unknown key found: $key")
 
-
-private fun <T> toArrayContainer(
-    type: KType,
-    data: UByteArray,
-    offset: Int,
-    containerMapper: (MutableList<*>) -> T
-): Pair<Int, T> {
-    require(data[offset] == ARRAY_START) { INVALID_ARRAY_START_MSG + offset }
-    val list = mutableListOf<Any?>()
-    var i = offset + 1
-    while (true) {
-        val decodeElement = decode(elemType(type), data, i)
-        i = decodeElement.first
-        val element = decodeElement.second
-
-        list.add(element)
-        if (data[i] == CONTAINER_END) break
-        require(data[i] == ELEMENT_SEPARATOR) { EXPECTED_ELEMENT_SEPARATOR_MSG + i }
-        i++
-    }
-    return i + 1 to containerMapper(list)
-}
-
-
-private fun <T, U> toObjectContainer(
-    keyType: KType,
-    keyMapper: (Any?) -> U,
-    valueTypeResolver: (U) -> KType,
-    data: UByteArray,
-    offset: Int,
-    containerMapper: (MutableMap<U, *>) -> T
-): Pair<Int, T> {
-    require(data[offset] == OBJECT_START) { INVALID_OBJECT_START_MSG + offset }
-    val map = mutableMapOf<U, Any?>()
-    var i = offset + 1
-    while (true) {
-        val decodeKey = decode(keyType, data, i)
-        i = decodeKey.first
-        val key = keyMapper(decodeKey.second)
-
-        require(data[i] == ELEMENT_SEPARATOR) { EXPECTED_ELEMENT_SEPARATOR_MSG + i }
-        i++
-
-        val valueType = valueTypeResolver(key)
-        val decodeValue = decode(valueType, data, i)
-        i = decodeValue.first
-        val value = decodeValue.second
-
-        map[key] = value
-        if (data[i] == CONTAINER_END) break
-        require(data[i] == ELEMENT_SEPARATOR) { EXPECTED_ELEMENT_SEPARATOR_MSG + i }
-        i++
-    }
-    return i + 1 to containerMapper.invoke(map)
-}

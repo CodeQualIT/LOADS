@@ -2,6 +2,12 @@
 
 package nl.cqit.loads
 
+import nl.cqit.loads.model.ARRAY_START
+import nl.cqit.loads.model.BINARY_VALUE
+import nl.cqit.loads.model.CONTAINER_END
+import nl.cqit.loads.model.ELEMENT_SEPARATOR
+import nl.cqit.loads.model.NULL_VALUE
+import nl.cqit.loads.model.OBJECT_START
 import nl.cqit.loads.utils.toUByteArray
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

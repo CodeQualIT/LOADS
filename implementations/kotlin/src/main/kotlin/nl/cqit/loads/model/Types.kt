@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
-package nl.cqit.loads
+package nl.cqit.loads.model
 
 import nl.cqit.loads.utils.toUByteArray
 import java.nio.charset.StandardCharsets.UTF_8

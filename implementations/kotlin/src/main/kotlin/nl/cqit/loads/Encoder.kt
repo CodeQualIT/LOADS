@@ -2,12 +2,31 @@
 
 package nl.cqit.loads
 
+import nl.cqit.loads.model.ARRAY_START
+import nl.cqit.loads.model.BINARY_VALUE
+import nl.cqit.loads.model.BYTE_TYPE
+import nl.cqit.loads.model.CONTAINER_END
+import nl.cqit.loads.model.DOUBLE_TYPE
+import nl.cqit.loads.model.ELEMENT_SEPARATOR
+import nl.cqit.loads.model.FALSE_TYPE
+import nl.cqit.loads.model.FLOAT_TYPE
+import nl.cqit.loads.model.INT_TYPE
+import nl.cqit.loads.model.LONG_TYPE
+import nl.cqit.loads.model.NULL_VALUE
+import nl.cqit.loads.model.OBJECT_START
+import nl.cqit.loads.model.SHORT_TYPE
+import nl.cqit.loads.model.TIMESTAMP12_TYPE
+import nl.cqit.loads.model.TRUE_TYPE
+import nl.cqit.loads.model.UBYTE_TYPE
+import nl.cqit.loads.model.UINT_TYPE
+import nl.cqit.loads.model.ULONG_TYPE
+import nl.cqit.loads.model.USHORT_TYPE
 import nl.cqit.loads.utils.callToByteArrayMethod
 import nl.cqit.loads.utils.callToUByteArrayMethod
 import nl.cqit.loads.utils.getProperties
 import nl.cqit.loads.utils.hasToByteArrayMethod
 import nl.cqit.loads.utils.hasToUByteArrayMethod
-import nl.cqit.loads.utils.toBase64UByteArray
+import nl.cqit.loads.utils.encodeBase64
 import nl.cqit.loads.utils.toUByteArray
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Instant
@@ -70,55 +89,50 @@ private fun fromString(string: String) =
     string.toUByteArray(UTF_8)
 
 private fun fromByte(byte: Byte): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *BYTE_TYPE, *byte.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *BYTE_TYPE, *byte.toUByteArray().encodeBase64())
 
 private fun fromShort(short: Short): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *SHORT_TYPE, *short.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *SHORT_TYPE, *short.toUByteArray().encodeBase64())
 
 private fun fromInt(int: Int): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *INT_TYPE, *int.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *INT_TYPE, *int.toUByteArray().encodeBase64())
 
 private fun fromLong(long: Long): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *LONG_TYPE, *long.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *LONG_TYPE, *long.toUByteArray().encodeBase64())
 
 private fun fromUByte(uByte: UByte): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *UBYTE_TYPE, *uByte.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *UBYTE_TYPE, *uByte.toUByteArray().encodeBase64())
 
 private fun fromUShort(uShort: UShort): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *USHORT_TYPE, *uShort.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *USHORT_TYPE, *uShort.toUByteArray().encodeBase64())
 
 private fun fromUInt(uInt: UInt): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *UINT_TYPE, *uInt.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *UINT_TYPE, *uInt.toUByteArray().encodeBase64())
 
 private fun fromULong(uLong: ULong): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *ULONG_TYPE, *uLong.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *ULONG_TYPE, *uLong.toUByteArray().encodeBase64())
 
 private fun fromFloat(float: Float): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *FLOAT_TYPE, *float.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *FLOAT_TYPE, *float.toUByteArray().encodeBase64())
 
 private fun fromDouble(double: Double): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *DOUBLE_TYPE, *double.toUByteArray())
+    ubyteArrayOf(BINARY_VALUE, *DOUBLE_TYPE, *double.toUByteArray().encodeBase64())
 
 private fun fromBoolean(boolean: Boolean): UByteArray =
     ubyteArrayOf(BINARY_VALUE, *if (boolean) TRUE_TYPE else FALSE_TYPE)
 
-fun fromInstant(instant: Instant ): UByteArray {
-    val data = instant.toBigInteger().toByteArray().toUByteArray()
-    return ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12_TYPE, *data.toBase64UByteArray())
-}
-
-private fun Instant.toBigInteger() =
-    epochSecond.toBigInteger().shiftLeft(32) + nano.toBigInteger()
+fun fromInstant(instant: Instant ): UByteArray =
+    ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12_TYPE, *instant.toUByteArray().encodeBase64())
 
 fun fromOffsetDateTime(odt: OffsetDateTime): UByteArray = fromInstant(odt.toInstant())
 fun fromZonedDateTime(zdt: ZonedDateTime): UByteArray = fromInstant(zdt.toInstant())
 
 fun ByteArray.toLoads(type: String): UByteArray = fromByteArray(type, this)
 fun fromUByteArray(type: String, byteArray: UByteArray): UByteArray = ubyteArrayOf(
-    BINARY_VALUE, *("(${type})").toUByteArray(UTF_8), *byteArray.toBase64UByteArray()
+    BINARY_VALUE, *("(${type})").toUByteArray(UTF_8), *byteArray.encodeBase64()
 )
 
 fun UByteArray.toLoads(type: String): UByteArray = fromUByteArray(type, this)
 fun fromByteArray(type: String, byteArray: ByteArray): UByteArray = ubyteArrayOf(
-    BINARY_VALUE, *("(${type})").toUByteArray(UTF_8), *byteArray.toUByteArray().toBase64UByteArray()
+    BINARY_VALUE, *("(${type})").toUByteArray(UTF_8), *byteArray.toUByteArray().encodeBase64()
 )
