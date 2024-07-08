@@ -2,11 +2,17 @@
 
 package nl.cqit.loads
 
+import kotlinx.io.bytestring.ByteString
+import kotlinx.io.bytestring.startsWith
+import nl.cqit.loads.model.BINARY_VALUE
+import nl.cqit.loads.model.INVALID_BINARY_VALUE_MSG
 import nl.cqit.loads.model.INVALID_STRING_CHARACTER_MSG
 import nl.cqit.loads.model.SPECIAL_BYTES
+import nl.cqit.loads.model.BINARY_TYPES
 import nl.cqit.loads.model.VALUE_TERMINATORS
 import nl.cqit.loads.utils.andThen
 import nl.cqit.loads.utils.cast
+import nl.cqit.loads.utils.decodeBase64
 import nl.cqit.loads.utils.elemType
 import nl.cqit.loads.utils.get
 import nl.cqit.loads.utils.isData
@@ -32,8 +38,8 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
         type.classifier == Map::class -> toMap(type, data, offset)
         type.classifier == String::class -> toString(data, offset)
         isData(type.classifier) -> toData(type, data, offset)
+        type.classifier == UByteArray::class -> toUByteArray(type, data, offset)
 //        ByteArray::class -> TODO()
-//        UByteArray::class -> TODO()
 //        String::class -> TODO()
 //        Byte::class -> TODO()
 //        Short::class -> TODO()
@@ -54,21 +60,20 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
     return newOffset to result
 }
 
+private fun toUByteArray(type: KType, data: UByteArray, offset: Int): Pair<Int, Any?> {
+    require(data[offset] == BINARY_VALUE) { INVALID_BINARY_VALUE_MSG + offset }
+    var (newOffset, value) = extractNextValue(data, offset + 1)
+    val binaryType = BINARY_TYPES.filter { ByteString(value.toByteArray()).startsWith(it.toByteArray()) }
+        .firstOrNull()
+    if (binaryType != null) {
+        value = value.sliceArray(binaryType.size until value.size)
+    }
+    return newOffset to value.decodeBase64()
+}
 
 private fun toString(data: UByteArray, offset: Int): Pair<Int, String> {
-    var i = offset
-    while (i < data.size && data[i] !in VALUE_TERMINATORS) i++
-    val slice = data.sliceArray(offset until i)
-    val specialCharactersInString = slice.intersect(SPECIAL_BYTES)
-    require(specialCharactersInString.isEmpty()) {
-        val invalidCharacters = specialCharactersInString.map {
-            val hex = it.toHexString(HexFormat.UpperCase)
-            val pos = slice.indexOf(it) + offset
-            "Ox$hex at position $pos"
-        }
-        INVALID_STRING_CHARACTER_MSG + invalidCharacters.joinToString()
-    }
-    return i to String(slice.toByteArray())
+    val (newOffset, value) = extractNextValue(data, offset)
+    return newOffset to String(value.toByteArray())
 }
 
 private fun toArray(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>> =
@@ -97,6 +102,22 @@ private fun toData(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
         typeOf<String>(), constructor.parameters::get, KParameter::type,
         constructor::callBy, data, offset
     )
+}
+
+private fun extractNextValue(data: UByteArray, offset: Int): Pair<Int, UByteArray> {
+    var i = offset
+    while (i < data.size && data[i] !in VALUE_TERMINATORS) i++
+    val slice = data.sliceArray(offset until i)
+    val specialCharactersInString = slice.intersect(SPECIAL_BYTES)
+    require(specialCharactersInString.isEmpty()) {
+        val invalidCharacters = specialCharactersInString.map {
+            val hex = it.toHexString(HexFormat.UpperCase)
+            val pos = slice.indexOf(it) + offset
+            "Ox$hex at position $pos"
+        }
+        INVALID_STRING_CHARACTER_MSG + invalidCharacters.joinToString()
+    }
+    return i to slice
 }
 
 

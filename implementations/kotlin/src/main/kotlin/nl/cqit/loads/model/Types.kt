@@ -31,3 +31,32 @@ internal val BOOLEAN_TYPE3 = "!3".toUByteArray(UTF_8)
 internal val BOOLEAN_TYPE4 = "!4".toUByteArray(UTF_8)
 internal val BOOLEAN_TYPE5 = "!5".toUByteArray(UTF_8)
 internal val BOOLEAN_TYPE6 = "!6".toUByteArray(UTF_8)
+
+internal val BINARY_TYPES: List<UByteArray> = listOf(
+    BYTE_TYPE,
+    SHORT_TYPE,
+    INT_TYPE,
+    LONG_TYPE,
+
+    UBYTE_TYPE,
+    USHORT_TYPE,
+    UINT_TYPE,
+    ULONG_TYPE,
+
+    FLOAT_TYPE,
+    DOUBLE_TYPE,
+
+    TIMESTAMP4_TYPE,
+    TIMESTAMP8_TYPE,
+    TIMESTAMP12_TYPE,
+
+    TRUE_TYPE,
+    FALSE_TYPE,
+
+    BOOLEAN_TYPE1,
+    BOOLEAN_TYPE2,
+    BOOLEAN_TYPE3,
+    BOOLEAN_TYPE4,
+    BOOLEAN_TYPE5,
+    BOOLEAN_TYPE6,
+)
