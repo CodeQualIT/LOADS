@@ -2,13 +2,13 @@
 
 package nl.cqit.loads
 
-import kotlinx.io.bytestring.ByteString
-import kotlinx.io.bytestring.startsWith
 import nl.cqit.loads.model.BINARY_VALUE
 import nl.cqit.loads.model.INVALID_BINARY_VALUE_MSG
 import nl.cqit.loads.model.INVALID_STRING_CHARACTER_MSG
 import nl.cqit.loads.model.SPECIAL_BYTES
-import nl.cqit.loads.model.BINARY_TYPES
+import nl.cqit.loads.model.BINARY_TYPE_CATEGORIES
+import nl.cqit.loads.model.CUSTOM_BINARY_TYPE_END
+import nl.cqit.loads.model.CUSTOM_BINARY_TYPE_START
 import nl.cqit.loads.model.VALUE_TERMINATORS
 import nl.cqit.loads.utils.andThen
 import nl.cqit.loads.utils.cast
@@ -24,7 +24,7 @@ import kotlin.reflect.*
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.primaryConstructor
 
-inline fun <reified T : Any> decode(data: UByteArray): T {
+inline fun <reified T> decode(data: UByteArray): T {
     val type = typeOf<T>()
     return decode(type, data, 0).second as T
 }
@@ -36,9 +36,10 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
         type.classifier == Set::class -> toSet(type, data, offset)
         type.classifier == Collection::class -> toCollection(type, data, offset)
         type.classifier == Map::class -> toMap(type, data, offset)
-        type.classifier == String::class -> toString(data, offset)
         isData(type.classifier) -> toData(type, data, offset)
+        type.classifier == String::class -> toString(type, data, offset)
         type.classifier == UByteArray::class -> toUByteArray(type, data, offset)
+        type.classifier == ByteArray::class -> toByteArray(type, data, offset)
 //        ByteArray::class -> TODO()
 //        String::class -> TODO()
 //        Byte::class -> TODO()
@@ -60,20 +61,28 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
     return newOffset to result
 }
 
-private fun toUByteArray(type: KType, data: UByteArray, offset: Int): Pair<Int, Any?> {
+private fun toString(type: KType, data: UByteArray, offset: Int): Pair<Int, String> {
+    val (newOffset, value) = extractNextValue(data, offset, VALUE_TERMINATORS)
+    return newOffset to String(value.toByteArray())
+}
+
+private fun toUByteArray(type: KType, data: UByteArray, offset: Int): Pair<Int, UByteArray> {
     require(data[offset] == BINARY_VALUE) { INVALID_BINARY_VALUE_MSG + offset }
-    var (newOffset, value) = extractNextValue(data, offset + 1)
-    val binaryType = BINARY_TYPES.filter { ByteString(value.toByteArray()).startsWith(it.toByteArray()) }
-        .firstOrNull()
-    if (binaryType != null) {
-        value = value.sliceArray(binaryType.size until value.size)
+    val (valueOffset, binaryType) = when {
+        data[offset + 1] in BINARY_TYPE_CATEGORIES -> offset + 3 to data.sliceArray(offset + 1 until offset + 3)
+        data[offset + 1] == CUSTOM_BINARY_TYPE_START -> {
+            extractNextValue(data, offset + 2, ubyteArrayOf(CUSTOM_BINARY_TYPE_END))
+                .let { (newOffset, value) -> newOffset + 1 to value }
+        }
+        else -> offset + 1 to null
     }
+    val (newOffset, value) = extractNextValue(data, valueOffset, VALUE_TERMINATORS)
     return newOffset to value.decodeBase64()
 }
 
-private fun toString(data: UByteArray, offset: Int): Pair<Int, String> {
-    val (newOffset, value) = extractNextValue(data, offset)
-    return newOffset to String(value.toByteArray())
+private fun toByteArray(type: KType, data: UByteArray, offset: Int): Pair<Int, ByteArray> {
+    val (newOffset, value) = toUByteArray(type, data, offset)
+    return newOffset to value.toByteArray()
 }
 
 private fun toArray(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>> =
@@ -104,9 +113,9 @@ private fun toData(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
     )
 }
 
-private fun extractNextValue(data: UByteArray, offset: Int): Pair<Int, UByteArray> {
+private fun extractNextValue(data: UByteArray, offset: Int, terminators: UByteArray): Pair<Int, UByteArray> {
     var i = offset
-    while (i < data.size && data[i] !in VALUE_TERMINATORS) i++
+    while (i < data.size && data[i] !in terminators) i++
     val slice = data.sliceArray(offset until i)
     val specialCharactersInString = slice.intersect(SPECIAL_BYTES)
     require(specialCharactersInString.isEmpty()) {

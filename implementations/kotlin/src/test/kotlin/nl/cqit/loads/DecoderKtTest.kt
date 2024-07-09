@@ -3,8 +3,11 @@
 package nl.cqit.loads
 
 import nl.cqit.loads.model.ARRAY_START
+import nl.cqit.loads.model.BINARY_VALUE
 import nl.cqit.loads.model.CONTAINER_END
 import nl.cqit.loads.model.ELEMENT_SEPARATOR
+import nl.cqit.loads.model.INT_TYPE
+import nl.cqit.loads.model.LONG_TYPE
 import nl.cqit.loads.model.OBJECT_START
 import nl.cqit.loads.utils.toUByteArray
 import org.assertj.core.api.Assertions.assertThat
@@ -24,6 +27,72 @@ class DecoderKtTest {
         // verify
         val expected = "123"
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode uByteArray`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"AQID".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UByteArray = decode(input)
+
+        // verify
+        val expected = ubyteArrayOf(0x01u, 0x02u, 0x03u)
+        assertThat(actual).containsSequence(expected)
+    }
+
+    @Test
+    fun `decode uByteArray with int type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT_TYPE,
+            *"AQID".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UByteArray = decode(input)
+
+        // verify
+        val expected = ubyteArrayOf(0x01u, 0x02u, 0x03u)
+        assertThat(actual).containsSequence(expected)
+    }
+
+    @Test
+    fun `decode uByteArray with custom type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"(mycustomtype)".toUByteArray(UTF_8),
+            *"AQID".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UByteArray = decode(input)
+
+        // verify
+        val expected = ubyteArrayOf(0x01u, 0x02u, 0x03u)
+        assertThat(actual).containsSequence(expected)
+    }
+
+    @Test
+    fun `decode ByteArray`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"AQID".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ByteArray = decode(input)
+
+        // verify
+        val expected = byteArrayOf(0x01, 0x02, 0x03)
+        assertThat(actual).containsExactly(*expected)
     }
 
     @Test

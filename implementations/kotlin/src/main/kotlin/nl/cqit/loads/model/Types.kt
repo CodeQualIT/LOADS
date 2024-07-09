@@ -60,3 +60,8 @@ internal val BINARY_TYPES: List<UByteArray> = listOf(
     BOOLEAN_TYPE5,
     BOOLEAN_TYPE6,
 )
+
+internal val BINARY_TYPE_CATEGORIES = BINARY_TYPES.map { it.first() }.toSet()
+
+internal val CUSTOM_BINARY_TYPE_START = '('.code.toUByte()
+internal val CUSTOM_BINARY_TYPE_END = ')'.code.toUByte()
