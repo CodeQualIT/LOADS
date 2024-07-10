@@ -6,9 +6,8 @@ import nl.cqit.loads.model.ARRAY_START
 import nl.cqit.loads.model.BINARY_VALUE
 import nl.cqit.loads.model.CONTAINER_END
 import nl.cqit.loads.model.ELEMENT_SEPARATOR
-import nl.cqit.loads.model.INT_TYPE
-import nl.cqit.loads.model.LONG_TYPE
 import nl.cqit.loads.model.OBJECT_START
+import nl.cqit.loads.model.ShortType.INT
 import nl.cqit.loads.utils.toUByteArray
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -50,7 +49,7 @@ class DecoderKtTest {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
-            *INT_TYPE,
+            *INT.binaryType,
             *"AQID".toUByteArray(UTF_8)
         )
 

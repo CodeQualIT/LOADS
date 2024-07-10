@@ -4,23 +4,11 @@ package nl.cqit.loads
 
 import nl.cqit.loads.model.ARRAY_START
 import nl.cqit.loads.model.BINARY_VALUE
-import nl.cqit.loads.model.BYTE_TYPE
 import nl.cqit.loads.model.CONTAINER_END
-import nl.cqit.loads.model.DOUBLE_TYPE
 import nl.cqit.loads.model.ELEMENT_SEPARATOR
-import nl.cqit.loads.model.FALSE_TYPE
-import nl.cqit.loads.model.FLOAT_TYPE
-import nl.cqit.loads.model.INT_TYPE
-import nl.cqit.loads.model.LONG_TYPE
 import nl.cqit.loads.model.NULL_VALUE
 import nl.cqit.loads.model.OBJECT_START
-import nl.cqit.loads.model.SHORT_TYPE
-import nl.cqit.loads.model.TIMESTAMP12_TYPE
-import nl.cqit.loads.model.TRUE_TYPE
-import nl.cqit.loads.model.UBYTE_TYPE
-import nl.cqit.loads.model.UINT_TYPE
-import nl.cqit.loads.model.ULONG_TYPE
-import nl.cqit.loads.model.USHORT_TYPE
+import nl.cqit.loads.model.ShortType.*
 import nl.cqit.loads.utils.callToByteArrayMethod
 import nl.cqit.loads.utils.callToUByteArrayMethod
 import nl.cqit.loads.utils.getProperties
@@ -89,40 +77,40 @@ private fun fromString(string: String) =
     string.toUByteArray(UTF_8)
 
 private fun fromByte(byte: Byte): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *BYTE_TYPE, *byte.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *BYTE.binaryType, *byte.toUByteArray().encodeBase64())
 
 private fun fromShort(short: Short): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *SHORT_TYPE, *short.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *SHORT.binaryType, *short.toUByteArray().encodeBase64())
 
 private fun fromInt(int: Int): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *INT_TYPE, *int.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *INT.binaryType, *int.toUByteArray().encodeBase64())
 
 private fun fromLong(long: Long): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *LONG_TYPE, *long.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *LONG.binaryType, *long.toUByteArray().encodeBase64())
 
 private fun fromUByte(uByte: UByte): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *UBYTE_TYPE, *uByte.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *UBYTE.binaryType, *uByte.toUByteArray().encodeBase64())
 
 private fun fromUShort(uShort: UShort): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *USHORT_TYPE, *uShort.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *USHORT.binaryType, *uShort.toUByteArray().encodeBase64())
 
 private fun fromUInt(uInt: UInt): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *UINT_TYPE, *uInt.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *UINT.binaryType, *uInt.toUByteArray().encodeBase64())
 
 private fun fromULong(uLong: ULong): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *ULONG_TYPE, *uLong.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *ULONG.binaryType, *uLong.toUByteArray().encodeBase64())
 
 private fun fromFloat(float: Float): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *FLOAT_TYPE, *float.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *FLOAT.binaryType, *float.toUByteArray().encodeBase64())
 
 private fun fromDouble(double: Double): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *DOUBLE_TYPE, *double.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *DOUBLE.binaryType, *double.toUByteArray().encodeBase64())
 
 private fun fromBoolean(boolean: Boolean): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *if (boolean) TRUE_TYPE else FALSE_TYPE)
+    ubyteArrayOf(BINARY_VALUE, *if (boolean) TRUE.binaryType else FALSE.binaryType)
 
 fun fromInstant(instant: Instant ): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12_TYPE, *instant.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12.binaryType, *instant.toUByteArray().encodeBase64())
 
 fun fromOffsetDateTime(odt: OffsetDateTime): UByteArray = fromInstant(odt.toInstant())
 fun fromZonedDateTime(zdt: ZonedDateTime): UByteArray = fromInstant(zdt.toInstant())

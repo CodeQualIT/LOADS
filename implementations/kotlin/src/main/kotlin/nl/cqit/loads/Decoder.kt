@@ -6,9 +6,10 @@ import nl.cqit.loads.model.BINARY_VALUE
 import nl.cqit.loads.model.INVALID_BINARY_VALUE_MSG
 import nl.cqit.loads.model.INVALID_STRING_CHARACTER_MSG
 import nl.cqit.loads.model.SPECIAL_BYTES
-import nl.cqit.loads.model.BINARY_TYPE_CATEGORIES
 import nl.cqit.loads.model.CUSTOM_BINARY_TYPE_END
 import nl.cqit.loads.model.CUSTOM_BINARY_TYPE_START
+import nl.cqit.loads.model.ShortType
+import nl.cqit.loads.model.ShortType.Companion.BINARY_TYPE_CATEGORIES
 import nl.cqit.loads.model.VALUE_TERMINATORS
 import nl.cqit.loads.utils.andThen
 import nl.cqit.loads.utils.cast
@@ -67,21 +68,12 @@ private fun toString(type: KType, data: UByteArray, offset: Int): Pair<Int, Stri
 }
 
 private fun toUByteArray(type: KType, data: UByteArray, offset: Int): Pair<Int, UByteArray> {
-    require(data[offset] == BINARY_VALUE) { INVALID_BINARY_VALUE_MSG + offset }
-    val (valueOffset, binaryType) = when {
-        data[offset + 1] in BINARY_TYPE_CATEGORIES -> offset + 3 to data.sliceArray(offset + 1 until offset + 3)
-        data[offset + 1] == CUSTOM_BINARY_TYPE_START -> {
-            extractNextValue(data, offset + 2, ubyteArrayOf(CUSTOM_BINARY_TYPE_END))
-                .let { (newOffset, value) -> newOffset + 1 to value }
-        }
-        else -> offset + 1 to null
-    }
-    val (newOffset, value) = extractNextValue(data, valueOffset, VALUE_TERMINATORS)
-    return newOffset to value.decodeBase64()
+    val (newOffset, value, _) = extractBinary(type, data, offset)
+    return newOffset to value
 }
 
 private fun toByteArray(type: KType, data: UByteArray, offset: Int): Pair<Int, ByteArray> {
-    val (newOffset, value) = toUByteArray(type, data, offset)
+    val (newOffset, value, _) = extractBinary(type, data, offset)
     return newOffset to value.toByteArray()
 }
 
@@ -111,6 +103,20 @@ private fun toData(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
         typeOf<String>(), constructor.parameters::get, KParameter::type,
         constructor::callBy, data, offset
     )
+}
+
+private fun extractBinary(type: KType, data: UByteArray, offset: Int): Triple<Int, UByteArray, ShortType?> {
+    require(data[offset] == BINARY_VALUE) { INVALID_BINARY_VALUE_MSG + offset }
+    val (valueOffset, binaryType) = when {
+        data[offset + 1] in BINARY_TYPE_CATEGORIES -> offset + 3 to data.sliceArray(offset + 1 until offset + 3)
+        data[offset + 1] == CUSTOM_BINARY_TYPE_START -> {
+            extractNextValue(data, offset + 2, ubyteArrayOf(CUSTOM_BINARY_TYPE_END))
+                .let { (newOffset, value) -> newOffset + 1 to value }
+        }
+        else -> offset + 1 to null
+    }
+    val (newOffset, value) = extractNextValue(data, valueOffset, VALUE_TERMINATORS)
+    return Triple(newOffset, value.decodeBase64(), binaryType?.let(ShortType::valueOf))
 }
 
 private fun extractNextValue(data: UByteArray, offset: Int, terminators: UByteArray): Pair<Int, UByteArray> {
