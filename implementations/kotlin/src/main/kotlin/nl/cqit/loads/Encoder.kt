@@ -106,8 +106,10 @@ private fun fromFloat(float: Float): UByteArray =
 private fun fromDouble(double: Double): UByteArray =
     ubyteArrayOf(BINARY_VALUE, *DOUBLE.binaryType, *double.toUByteArray().encodeBase64())
 
-private fun fromBoolean(boolean: Boolean): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *if (boolean) TRUE.binaryType else FALSE.binaryType)
+private fun fromBoolean(boolean: Boolean): UByteArray {
+    val binaryType = if (boolean) TRUE.binaryType else FALSE.binaryType
+    return ubyteArrayOf(BINARY_VALUE, *binaryType)
+}
 
 fun fromInstant(instant: Instant ): UByteArray =
     ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12.binaryType, *instant.toUByteArray().encodeBase64())
