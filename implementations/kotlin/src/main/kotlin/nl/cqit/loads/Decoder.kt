@@ -4,7 +4,7 @@ package nl.cqit.loads
 
 import nl.cqit.loads.model.BINARY_VALUE
 import nl.cqit.loads.model.BinaryType
-import nl.cqit.loads.model.BinaryType.Companion.BINARY_TYPE_CATEGORIES
+import nl.cqit.loads.model.BinaryType.Companion.PREDEFINED_BINARY_TYPE_CATEGORIES
 import nl.cqit.loads.model.INVALID_BINARY_VALUE_MSG
 import nl.cqit.loads.model.INVALID_STRING_CHARACTER_MSG
 import nl.cqit.loads.model.SPECIAL_BYTES
@@ -108,7 +108,7 @@ private fun toData(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
 private fun extractBinary(type: KType, data: UByteArray, offset: Int): Triple<Int, UByteArray, BinaryType?> {
     require(data[offset] == BINARY_VALUE) { INVALID_BINARY_VALUE_MSG + offset }
     val (valueOffset, binaryType) = when {
-        data[offset + 1] in BINARY_TYPE_CATEGORIES -> offset + 3 to data.sliceArray(offset + 1 until offset + 3)
+        data[offset + 1] in PREDEFINED_BINARY_TYPE_CATEGORIES -> offset + 3 to data.sliceArray(offset + 1 until offset + 3)
         data[offset + 1] == CUSTOM_BINARY_TYPE_START -> {
             extractNextValue(data, offset + 2, ubyteArrayOf(CUSTOM_BINARY_TYPE_END))
                 .let { (newOffset, value) -> newOffset + 1 to value }
