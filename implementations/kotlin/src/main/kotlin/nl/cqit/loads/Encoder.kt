@@ -107,8 +107,8 @@ private fun fromDouble(double: Double): UByteArray =
     ubyteArrayOf(BINARY_VALUE, *DOUBLE.binaryType, *double.toUByteArray().encodeBase64())
 
 private fun fromBoolean(boolean: Boolean): UByteArray {
-    val binaryType = if (boolean) TRUE.binaryType else FALSE.binaryType
-    return ubyteArrayOf(BINARY_VALUE, *binaryType)
+    val booleanType = if (boolean) TRUE else FALSE
+    return ubyteArrayOf(BINARY_VALUE, *booleanType.binaryType)
 }
 
 fun fromInstant(instant: Instant ): UByteArray =
