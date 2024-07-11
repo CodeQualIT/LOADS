@@ -3,13 +3,13 @@
 package nl.cqit.loads
 
 import nl.cqit.loads.model.BINARY_VALUE
+import nl.cqit.loads.model.BinaryType
+import nl.cqit.loads.model.BinaryType.Companion.BINARY_TYPE_CATEGORIES
 import nl.cqit.loads.model.INVALID_BINARY_VALUE_MSG
 import nl.cqit.loads.model.INVALID_STRING_CHARACTER_MSG
 import nl.cqit.loads.model.SPECIAL_BYTES
 import nl.cqit.loads.model.CUSTOM_BINARY_TYPE_END
 import nl.cqit.loads.model.CUSTOM_BINARY_TYPE_START
-import nl.cqit.loads.model.ShortType
-import nl.cqit.loads.model.ShortType.Companion.BINARY_TYPE_CATEGORIES
 import nl.cqit.loads.model.VALUE_TERMINATORS
 import nl.cqit.loads.utils.andThen
 import nl.cqit.loads.utils.cast
@@ -105,7 +105,7 @@ private fun toData(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
     )
 }
 
-private fun extractBinary(type: KType, data: UByteArray, offset: Int): Triple<Int, UByteArray, ShortType?> {
+private fun extractBinary(type: KType, data: UByteArray, offset: Int): Triple<Int, UByteArray, BinaryType?> {
     require(data[offset] == BINARY_VALUE) { INVALID_BINARY_VALUE_MSG + offset }
     val (valueOffset, binaryType) = when {
         data[offset + 1] in BINARY_TYPE_CATEGORIES -> offset + 3 to data.sliceArray(offset + 1 until offset + 3)
@@ -116,7 +116,7 @@ private fun extractBinary(type: KType, data: UByteArray, offset: Int): Triple<In
         else -> offset + 1 to null
     }
     val (newOffset, value) = extractNextValue(data, valueOffset, VALUE_TERMINATORS)
-    return Triple(newOffset, value.decodeBase64(), binaryType?.let(ShortType::valueOf))
+    return Triple(newOffset, value.decodeBase64(), binaryType?.let(BinaryType::valueOf))
 }
 
 private fun extractNextValue(data: UByteArray, offset: Int, terminators: UByteArray): Pair<Int, UByteArray> {
