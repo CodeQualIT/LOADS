@@ -111,11 +111,11 @@ private fun fromBoolean(boolean: Boolean): UByteArray {
     return ubyteArrayOf(BINARY_VALUE, *booleanType.binaryType)
 }
 
-fun fromInstant(instant: Instant ): UByteArray =
+private fun fromInstant(instant: Instant ): UByteArray =
     ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12.binaryType, *instant.toUByteArray().encodeBase64())
 
-fun fromOffsetDateTime(odt: OffsetDateTime): UByteArray = fromInstant(odt.toInstant())
-fun fromZonedDateTime(zdt: ZonedDateTime): UByteArray = fromInstant(zdt.toInstant())
+private fun fromOffsetDateTime(odt: OffsetDateTime): UByteArray = fromInstant(odt.toInstant())
+private fun fromZonedDateTime(zdt: ZonedDateTime): UByteArray = fromInstant(zdt.toInstant())
 
 fun ByteArray.toLoads(type: String): UByteArray = fromByteArray(type, this)
 fun fromUByteArray(type: String, byteArray: UByteArray): UByteArray = ubyteArrayOf(
