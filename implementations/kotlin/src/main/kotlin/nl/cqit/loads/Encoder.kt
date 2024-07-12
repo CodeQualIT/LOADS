@@ -114,6 +114,7 @@ private fun fromBoolean(boolean: Boolean): UByteArray {
 private fun fromInstant(instant: Instant ): UByteArray =
     ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12.binaryType, *instant.toUByteArray().encodeBase64())
 
+// TODO encode the offset / time zone once it's added to the spec
 private fun fromOffsetDateTime(odt: OffsetDateTime): UByteArray = fromInstant(odt.toInstant())
 private fun fromZonedDateTime(zdt: ZonedDateTime): UByteArray = fromInstant(zdt.toInstant())
 
