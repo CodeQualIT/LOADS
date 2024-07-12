@@ -6,6 +6,9 @@ import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.time.Instant
 
+internal fun UByteArray.toByteBuffer(): ByteBuffer =
+    ByteBuffer.wrap(toByteArray())
+
 internal fun String.toUByteArray(charset: Charset): UByteArray =
     toByteArray(charset)
         .toUByteArray()
