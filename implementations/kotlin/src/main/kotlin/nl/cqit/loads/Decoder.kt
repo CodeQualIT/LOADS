@@ -26,6 +26,7 @@ import nl.cqit.loads.utils.keyType
 import nl.cqit.loads.utils.toArrayContainer
 import nl.cqit.loads.utils.toObjectContainer
 import nl.cqit.loads.utils.valueType
+import java.time.Instant
 import kotlin.reflect.*
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.primaryConstructor
@@ -57,7 +58,7 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
         type.classifier == Float::class -> toFloat(type, data, offset)
         type.classifier == Double::class -> toDouble(type, data, offset)
         type.classifier == Boolean::class -> toBoolean(type, data, offset)
-//        Instant::class -> TODO()
+        type.classifier == Instant::class -> toInstant(type, data, offset)
 //        OffsetDateTime::class -> TODO()
 //        ZonedDateTime::class -> TODO()
         else -> throw NotImplementedError()
@@ -80,7 +81,7 @@ private fun toByteArray(type: KType, data: UByteArray, offset: Int): Pair<Int, B
     return newOffset to value.toByteArray()
 }
 
-private fun toByte(type: KType, data: UByteArray, offset: Int): Pair<Int, Byte?> {
+private fun toByte(type: KType, data: UByteArray, offset: Int): Pair<Int, Byte> {
     val (newOffset, value, binaryType) = extractBinary(type, data, offset)
     require(binaryType == BYTE) { "Expected Byte but got $binaryType" }
     return newOffset to value.toByteBuffer().get()
@@ -144,6 +145,17 @@ private fun toBoolean(type: KType, data: UByteArray, offset: Int): Pair<Int, Boo
     val (newOffset, value , binaryType) = extractBinary(type, data, offset)
     require(binaryType in setOf(TRUE, FALSE, BOOLEAN1)) { "Expected Boolean but got $binaryType" }
     return newOffset to if (binaryType == BOOLEAN1) value[0] == 1.toUByte() else binaryType == TRUE
+}
+
+private fun toInstant(type: KType, data: UByteArray, offset: Int): Pair<Int, Instant> {
+    val (newOffset, value, binaryType) = extractBinary(type, data, offset)
+    require(binaryType in setOf(TIMESTAMP4, TIMESTAMP8, TIMESTAMP12)) { "Expected Instant but got $binaryType" }
+    return newOffset to when (binaryType) {
+        is TIMESTAMP4 -> Instant.ofEpochSecond(value.toByteBuffer().getInt().toLong())
+        is TIMESTAMP8 -> Instant.ofEpochMilli(value.toByteBuffer().getLong())
+        is TIMESTAMP12 -> Instant.ofEpochSecond(value.toByteBuffer().getInt().toLong(), value.toByteBuffer().getInt().toLong())
+        else -> error("Should be unreachable")
+    }
 }
 
 private fun toArray(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>> =
