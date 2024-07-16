@@ -7,7 +7,7 @@ import nl.cqit.loads.model.BINARY_VALUE
 import nl.cqit.loads.model.CONTAINER_END
 import nl.cqit.loads.model.ELEMENT_SEPARATOR
 import nl.cqit.loads.model.OBJECT_START
-import nl.cqit.loads.model.ShortType.INT
+import nl.cqit.loads.model.types.ShortType.INT
 import nl.cqit.loads.utils.toUByteArray
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -83,6 +83,40 @@ class DecoderKtTest {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
+            *"AQID".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ByteArray = decode(input)
+
+        // verify
+        val expected = byteArrayOf(0x01, 0x02, 0x03)
+        assertThat(actual).containsExactly(*expected)
+    }
+
+    @Test
+    fun `decode ByteArray with int type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.binaryType,
+            *"AQID".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ByteArray = decode(input)
+
+        // verify
+        val expected = byteArrayOf(0x01, 0x02, 0x03)
+        assertThat(actual).containsExactly(*expected)
+    }
+
+    @Test
+    fun `decode ByteArray with custom type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"(mycustomtype)".toUByteArray(UTF_8),
             *"AQID".toUByteArray(UTF_8)
         )
 

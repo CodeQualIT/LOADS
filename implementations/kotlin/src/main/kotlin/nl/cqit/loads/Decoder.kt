@@ -2,30 +2,19 @@
 
 package nl.cqit.loads
 
-import nl.cqit.loads.model.*
 import nl.cqit.loads.model.BINARY_VALUE
-import nl.cqit.loads.model.BinaryType
-import nl.cqit.loads.model.BinaryType.Companion.PREDEFINED_BINARY_TYPE_CATEGORIES
-import nl.cqit.loads.model.CUSTOM_BINARY_TYPE_END
-import nl.cqit.loads.model.CUSTOM_BINARY_TYPE_START
 import nl.cqit.loads.model.INVALID_BINARY_VALUE_MSG
 import nl.cqit.loads.model.INVALID_STRING_CHARACTER_MSG
 import nl.cqit.loads.model.SPECIAL_BYTES
-import nl.cqit.loads.model.ShortType.*
-import nl.cqit.loads.model.ShortType.BYTE
-import nl.cqit.loads.model.ShortType.INT
-import nl.cqit.loads.model.ShortType.SHORT
 import nl.cqit.loads.model.VALUE_TERMINATORS
+import nl.cqit.loads.model.types.BinaryType
+import nl.cqit.loads.model.types.BinaryType.Companion.PREDEFINED_BINARY_TYPE_CATEGORIES
+import nl.cqit.loads.model.types.CUSTOM_BINARY_TYPE_END
+import nl.cqit.loads.model.types.CUSTOM_BINARY_TYPE_START
+import nl.cqit.loads.model.types.ShortType.*
+import nl.cqit.loads.model.types.SingleBooleanType
+import nl.cqit.loads.model.types.TimestampType
 import nl.cqit.loads.utils.*
-import nl.cqit.loads.utils.cast
-import nl.cqit.loads.utils.decodeBase64
-import nl.cqit.loads.utils.elemType
-import nl.cqit.loads.utils.get
-import nl.cqit.loads.utils.isData
-import nl.cqit.loads.utils.keyType
-import nl.cqit.loads.utils.toArrayContainer
-import nl.cqit.loads.utils.toObjectContainer
-import nl.cqit.loads.utils.valueType
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC

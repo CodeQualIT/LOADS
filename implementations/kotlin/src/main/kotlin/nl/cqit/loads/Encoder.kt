@@ -8,7 +8,7 @@ import nl.cqit.loads.model.CONTAINER_END
 import nl.cqit.loads.model.ELEMENT_SEPARATOR
 import nl.cqit.loads.model.NULL_VALUE
 import nl.cqit.loads.model.OBJECT_START
-import nl.cqit.loads.model.ShortType.*
+import nl.cqit.loads.model.types.ShortType.*
 import nl.cqit.loads.utils.callToByteArrayMethod
 import nl.cqit.loads.utils.callToUByteArrayMethod
 import nl.cqit.loads.utils.getProperties

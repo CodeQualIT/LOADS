@@ -2,13 +2,29 @@
 
 package nl.cqit.loads.model
 
-import nl.cqit.loads.model.ShortType.*
+import nl.cqit.loads.model.types.ShortType.*
 import nl.cqit.loads.utils.toUByteArray
 import java.nio.charset.StandardCharsets.UTF_8
 
-internal sealed class BinaryType(val binaryType: UByteArray) {
-    companion object {
-        private val PREDEFINED_BINARY_TYPES: List<ShortType> = listOf(
+object types {
+    internal sealed class BinaryType(val binaryType: UByteArray) {
+        companion object {
+            val PREDEFINED_BINARY_TYPE_CATEGORIES = listOf(
+                SignedIntegerType.PREFIX,
+                UnsignedIntegerType.PREFIX,
+                FloatingPointType.PREFIX,
+                TimestampType.PREFIX,
+                BooleanType.PREFIX
+            ).map { it.code.toUByte() }
+
+            fun valueOf(binaryType: UByteArray): BinaryType =
+                PREDEFINED_BINARY_TYPES.firstOrNull { it.binaryType.contentEquals(binaryType) } ?: CustomType(binaryType)
+        }
+    }
+
+    // Defined separately to avoid circular dependencies
+    private val BinaryType.Companion.PREDEFINED_BINARY_TYPES: List<ShortType>
+        get() = listOf(
             BYTE, SHORT, INT, LONG,
             UBYTE, USHORT, UINT, ULONG,
             FLOAT, DOUBLE,
@@ -16,58 +32,32 @@ internal sealed class BinaryType(val binaryType: UByteArray) {
             TRUE, FALSE,
             BOOLEAN1, BOOLEAN2, BOOLEAN3, BOOLEAN4, BOOLEAN5, BOOLEAN6
         )
-        val PREDEFINED_BINARY_TYPE_CATEGORIES = listOf(
-            SignedIntegerType.PREFIX,
-            UnsignedIntegerType.PREFIX,
-            FloatingPointType.PREFIX,
-            TimestampType.PREFIX,
-            BooleanType.PREFIX
-        ).map { it.code.toUByte() }
 
-        fun valueOf(binaryType: UByteArray): BinaryType =
-            PREDEFINED_BINARY_TYPES.firstOrNull { it.binaryType.contentEquals(binaryType) } ?: CustomType(binaryType)
-    }
-}
+    internal class CustomType(binaryType: UByteArray) : BinaryType(binaryType)
 
-internal class CustomType(binaryType: UByteArray) : BinaryType(binaryType)
-
-internal sealed class ShortType(val prefix: Char, suffix: Char) : BinaryType("$prefix$suffix".toUByteArray(UTF_8)) {
     internal sealed class SignedIntegerType(suffix: Char) : ShortType(PREFIX, suffix) {
         companion object {
             const val PREFIX = '#'
         }
     }
-    internal data object BYTE : SignedIntegerType('1')
-    internal data object SHORT : SignedIntegerType('2')
-    internal data object INT : SignedIntegerType('4')
-    internal data object LONG : SignedIntegerType('8')
 
     internal sealed class UnsignedIntegerType(suffix: Char) : ShortType(PREFIX, suffix) {
         companion object {
             const val PREFIX = '+'
         }
     }
-    internal data object UBYTE : UnsignedIntegerType('1')
-    internal data object USHORT : UnsignedIntegerType('2')
-    internal data object UINT : UnsignedIntegerType('4')
-    internal data object ULONG : UnsignedIntegerType('8')
 
     internal sealed class FloatingPointType(suffix: Char) : ShortType(PREFIX, suffix) {
         companion object {
             const val PREFIX = '~'
         }
     }
-    internal data object FLOAT : FloatingPointType('4')
-    internal data object DOUBLE : FloatingPointType('8')
 
     internal sealed class TimestampType(suffix: Char) : ShortType(PREFIX, suffix) {
         companion object {
             const val PREFIX = '@'
         }
     }
-    internal data object TIMESTAMP4 : TimestampType('4')
-    internal data object TIMESTAMP8 : TimestampType('8')
-    internal data object TIMESTAMP12 : TimestampType('C')
 
     internal sealed class BooleanType(suffix: Char) : ShortType(PREFIX, suffix) {
         companion object {
@@ -75,16 +65,37 @@ internal sealed class ShortType(val prefix: Char, suffix: Char) : BinaryType("$p
         }
     }
     internal sealed class SingleBooleanType(suffix: Char) : BooleanType(suffix)
-    internal data object TRUE : SingleBooleanType('t')
-    internal data object FALSE : SingleBooleanType('f')
-    internal data object BOOLEAN1 : SingleBooleanType('1')
     internal sealed class MultipleBooleansType(suffix: Char) : BooleanType(suffix)
-    internal data object BOOLEAN2 : MultipleBooleansType('2')
-    internal data object BOOLEAN3 : MultipleBooleansType('3')
-    internal data object BOOLEAN4 : MultipleBooleansType('4')
-    internal data object BOOLEAN5 : MultipleBooleansType('5')
-    internal data object BOOLEAN6 : MultipleBooleansType('6')
-}
 
-internal val CUSTOM_BINARY_TYPE_START = '('.code.toUByte()
-internal val CUSTOM_BINARY_TYPE_END = ')'.code.toUByte()
+    internal sealed class ShortType(val prefix: Char, suffix: Char) : BinaryType("$prefix$suffix".toUByteArray(UTF_8)) {
+        internal data object BYTE : SignedIntegerType('1')
+        internal data object SHORT : SignedIntegerType('2')
+        internal data object INT : SignedIntegerType('4')
+        internal data object LONG : SignedIntegerType('8')
+
+        internal data object UBYTE : UnsignedIntegerType('1')
+        internal data object USHORT : UnsignedIntegerType('2')
+        internal data object UINT : UnsignedIntegerType('4')
+        internal data object ULONG : UnsignedIntegerType('8')
+
+        internal data object FLOAT : FloatingPointType('4')
+        internal data object DOUBLE : FloatingPointType('8')
+
+        internal data object TIMESTAMP4 : TimestampType('4')
+        internal data object TIMESTAMP8 : TimestampType('8')
+        internal data object TIMESTAMP12 : TimestampType('C')
+
+        internal data object TRUE : SingleBooleanType('t')
+        internal data object FALSE : SingleBooleanType('f')
+        internal data object BOOLEAN1 : SingleBooleanType('1')
+
+        internal data object BOOLEAN2 : MultipleBooleansType('2')
+        internal data object BOOLEAN3 : MultipleBooleansType('3')
+        internal data object BOOLEAN4 : MultipleBooleansType('4')
+        internal data object BOOLEAN5 : MultipleBooleansType('5')
+        internal data object BOOLEAN6 : MultipleBooleansType('6')
+    }
+
+    internal val CUSTOM_BINARY_TYPE_START = '('.code.toUByte()
+    internal val CUSTOM_BINARY_TYPE_END = ')'.code.toUByte()
+}
