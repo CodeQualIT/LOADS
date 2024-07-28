@@ -17,7 +17,7 @@ import kotlin.text.Charsets.UTF_8
 class DecoderKtTest {
 
     @Test
-    fun `decode string`() {
+    fun `decode String`() {
         // prepare
         val input = ubyteArrayOf(0x31u, 0x32u, 0x33u)
 
@@ -30,7 +30,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode uByteArray`() {
+    fun `decode UByteArray`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -63,7 +63,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode uByteArray with custom type`() {
+    fun `decode UByteArray with custom type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -130,7 +130,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode byte`() {
+    fun `decode Byte`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -146,7 +146,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode byte with type`() {
+    fun `decode Byte with type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -164,7 +164,7 @@ class DecoderKtTest {
 
     //TODO implement custom type decoding for Byte et all
 //    @Test
-//    fun `decode byte with custom type`() {
+//    fun `decode Byte with custom type`() {
 //        // prepare
 //        val input = ubyteArrayOf(
 //            BINARY_VALUE,
@@ -181,7 +181,7 @@ class DecoderKtTest {
 //    }
 
     @Test
-    fun `decode byte with wrong type`() {
+    fun `decode Byte with wrong type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -196,7 +196,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode short`() {
+    fun `decode Short`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -212,7 +212,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode short with type`() {
+    fun `decode Short with type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -229,7 +229,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode short with wrong type`() {
+    fun `decode Short with wrong type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -244,7 +244,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode short with 1 byte`() {
+    fun `decode Short with 1 byte`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -260,7 +260,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode int`() {
+    fun `decode Int`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -276,7 +276,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode int with type`() {
+    fun `decode Int with type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -293,7 +293,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode int with wrong type`() {
+    fun `decode Int with wrong type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -308,7 +308,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode int with 1 byte`() {
+    fun `decode Int with 1 byte`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -324,7 +324,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode int with 2 bytes`() {
+    fun `decode Int with 2 bytes`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -340,7 +340,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode long`() {
+    fun `decode Long`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -356,7 +356,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode long with type`() {
+    fun `decode Long with type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -373,7 +373,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode long with wrong type`() {
+    fun `decode Long with wrong type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -388,7 +388,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode long with 1 byte`() {
+    fun `decode Long with 1 byte`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -404,7 +404,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode long with 2 bytes`() {
+    fun `decode Long with 2 bytes`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -420,7 +420,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode long with 4 bytes`() {
+    fun `decode Long with 4 bytes`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -432,6 +432,294 @@ class DecoderKtTest {
 
         // verify
         val expected = 1234567890L
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UByte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UByte = decode(input)
+
+        // verify
+        val expected = 123.toUByte()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UByte with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *UBYTE.type,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UByte = decode(input)
+
+        // verify
+        val expected = 123.toUByte()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UByte with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<UByte>(input) }
+            .withMessage("Expected UByte but got INT")
+    }
+
+    @Test
+    fun `decode UShort`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UShort = decode(input)
+
+        // verify
+        val expected = 12345.toUShort()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UShort with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *USHORT.type,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UShort = decode(input)
+
+        // verify
+        val expected = 12345.toUShort()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UShort with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<UShort>(input) }
+            .withMessage("Expected UShort but got INT")
+    }
+
+    @Test
+    fun `decode UShort with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UShort = decode(input)
+
+        // verify
+        val expected = 123.toUShort()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UInt`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UInt = decode(input)
+
+        // verify
+        val expected = 1234567890.toUInt()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UInt with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *UINT.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UInt = decode(input)
+
+        // verify
+        val expected = 1234567890.toUInt()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UInt with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *LONG.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<UInt>(input) }
+            .withMessage("Expected UInt but got LONG")
+    }
+
+    @Test
+    fun `decode UInt with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UInt = decode(input)
+
+        // verify
+        val expected = 123.toUInt()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UInt with 2 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UInt = decode(input)
+
+        // verify
+        val expected = 12345.toUInt()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ULong`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ULong = decode(input)
+
+        // verify
+        val expected = 1234567890123456789L.toULong()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ULong with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *ULONG.type,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ULong = decode(input)
+
+        // verify
+        val expected = 1234567890123456789L.toULong()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ULong with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<ULong>(input) }
+            .withMessage("Expected ULong but got INT")
+    }
+
+    @Test
+    fun `decode ULong with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ULong = decode(input)
+
+        // verify
+        val expected = 123.toULong()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ULong with 2 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ULong = decode(input)
+
+        // verify
+        val expected = 12345.toULong()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ULong with 4 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ULong = decode(input)
+
+        // verify
+        val expected = 1234567890.toULong()
         assertThat(actual).isEqualTo(expected)
     }
 
