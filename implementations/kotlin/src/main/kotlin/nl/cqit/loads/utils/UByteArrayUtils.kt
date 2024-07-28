@@ -9,6 +9,46 @@ import java.time.Instant
 internal fun UByteArray.toByteBuffer(): ByteBuffer =
     ByteBuffer.wrap(toByteArray())
 
+internal fun UByteArray.toByte(): Byte = toByteBuffer().get()
+
+internal fun UByteArray.toShort(): Short = when (size) {
+    Byte.SIZE_BYTES -> toByteBuffer().get().toShort()
+    else -> toByteBuffer().short
+}
+
+internal fun UByteArray.toInt(): Int = when (size) {
+    Byte.SIZE_BYTES -> toByteBuffer().get().toInt()
+    Short.SIZE_BYTES -> toByteBuffer().short.toInt()
+    else -> toByteBuffer().int
+}
+
+internal fun UByteArray.toLong(): Long = when (size) {
+    Byte.SIZE_BYTES -> toByteBuffer().get().toLong()
+    Short.SIZE_BYTES -> toByteBuffer().short.toLong()
+    Int.SIZE_BYTES -> toByteBuffer().int.toLong()
+    else -> toByteBuffer().long
+}
+
+internal fun UByteArray.toUByte(): UByte = toByteBuffer().get().toUByte()
+
+internal fun UByteArray.toUShort(): UShort = when (size) {
+    Byte.SIZE_BYTES -> toByteBuffer().get().toUShort()
+    else -> toByteBuffer().short.toUShort()
+}
+
+internal fun UByteArray.toUInt(): UInt = when (size) {
+    Byte.SIZE_BYTES -> toByteBuffer().get().toUInt()
+    Short.SIZE_BYTES -> toByteBuffer().short.toUInt()
+    else -> toByteBuffer().int.toUInt()
+}
+
+internal fun UByteArray.toULong(): ULong = when (size) {
+    Byte.SIZE_BYTES -> toByteBuffer().get().toULong()
+    Short.SIZE_BYTES -> toByteBuffer().short.toULong()
+    Int.SIZE_BYTES -> toByteBuffer().int.toULong()
+    else -> toByteBuffer().long.toULong()
+}
+
 internal fun String.toUByteArray(charset: Charset): UByteArray =
     toByteArray(charset)
         .toUByteArray()

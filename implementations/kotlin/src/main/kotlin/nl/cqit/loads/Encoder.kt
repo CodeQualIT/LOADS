@@ -77,42 +77,42 @@ private fun fromString(string: String) =
     string.toUByteArray(UTF_8)
 
 private fun fromByte(byte: Byte): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *BYTE.binaryType, *byte.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *BYTE.type, *byte.toUByteArray().encodeBase64())
 
 private fun fromShort(short: Short): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *SHORT.binaryType, *short.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *SHORT.type, *short.toUByteArray().encodeBase64())
 
 private fun fromInt(int: Int): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *INT.binaryType, *int.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *INT.type, *int.toUByteArray().encodeBase64())
 
 private fun fromLong(long: Long): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *LONG.binaryType, *long.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *LONG.type, *long.toUByteArray().encodeBase64())
 
 private fun fromUByte(uByte: UByte): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *UBYTE.binaryType, *uByte.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *UBYTE.type, *uByte.toUByteArray().encodeBase64())
 
 private fun fromUShort(uShort: UShort): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *USHORT.binaryType, *uShort.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *USHORT.type, *uShort.toUByteArray().encodeBase64())
 
 private fun fromUInt(uInt: UInt): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *UINT.binaryType, *uInt.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *UINT.type, *uInt.toUByteArray().encodeBase64())
 
 private fun fromULong(uLong: ULong): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *ULONG.binaryType, *uLong.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *ULONG.type, *uLong.toUByteArray().encodeBase64())
 
 private fun fromFloat(float: Float): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *FLOAT.binaryType, *float.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *FLOAT.type, *float.toUByteArray().encodeBase64())
 
 private fun fromDouble(double: Double): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *DOUBLE.binaryType, *double.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *DOUBLE.type, *double.toUByteArray().encodeBase64())
 
 private fun fromBoolean(boolean: Boolean): UByteArray {
     val booleanType = if (boolean) TRUE else FALSE
-    return ubyteArrayOf(BINARY_VALUE, *booleanType.binaryType)
+    return ubyteArrayOf(BINARY_VALUE, *booleanType.type)
 }
 
 private fun fromInstant(instant: Instant ): UByteArray =
-    ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12.binaryType, *instant.toUByteArray().encodeBase64())
+    ubyteArrayOf(BINARY_VALUE, *TIMESTAMP12.type, *instant.toUByteArray().encodeBase64())
 
 // TODO encode the offset / time zone once it's added to the spec
 private fun fromOffsetDateTime(odt: OffsetDateTime): UByteArray = fromInstant(odt.toInstant())

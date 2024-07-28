@@ -7,7 +7,9 @@ import nl.cqit.loads.utils.toUByteArray
 import java.nio.charset.StandardCharsets.UTF_8
 
 object types {
-    internal sealed class BinaryType(val binaryType: UByteArray) {
+    internal sealed class BinaryType(val typeStr: String?) {
+        val type: UByteArray = typeStr?.toUByteArray(UTF_8) ?: ubyteArrayOf()
+
         companion object {
             val PREDEFINED_BINARY_TYPE_CATEGORIES = listOf(
                 SignedIntegerType.PREFIX,
@@ -17,8 +19,12 @@ object types {
                 BooleanType.PREFIX
             ).map { it.code.toUByte() }
 
-            fun valueOf(binaryType: UByteArray): BinaryType =
-                PREDEFINED_BINARY_TYPES.firstOrNull { it.binaryType.contentEquals(binaryType) } ?: CustomType(binaryType)
+            fun valueOf(typeUBytes: UByteArray): BinaryType {
+                val type = String(typeUBytes.toByteArray())
+                return PREDEFINED_BINARY_TYPES
+                    .firstOrNull { it.typeStr.equals(type, ignoreCase = true) }
+                    ?: CustomType(type)
+            }
         }
     }
 
@@ -33,7 +39,7 @@ object types {
             BOOLEAN1, BOOLEAN2, BOOLEAN3, BOOLEAN4, BOOLEAN5, BOOLEAN6
         )
 
-    internal class CustomType(binaryType: UByteArray) : BinaryType(binaryType)
+    internal class CustomType(type: String?) : BinaryType(type?.let { "($it)" })
 
     internal sealed class SignedIntegerType(suffix: Char) : ShortType(PREFIX, suffix) {
         companion object {
@@ -67,7 +73,7 @@ object types {
     internal sealed class SingleBooleanType(suffix: Char) : BooleanType(suffix)
     internal sealed class MultipleBooleansType(suffix: Char) : BooleanType(suffix)
 
-    internal sealed class ShortType(val prefix: Char, suffix: Char) : BinaryType("$prefix$suffix".toUByteArray(UTF_8)) {
+    internal sealed class ShortType(val prefix: Char, suffix: Char) : BinaryType("$prefix$suffix") {
         internal data object BYTE : SignedIntegerType('1')
         internal data object SHORT : SignedIntegerType('2')
         internal data object INT : SignedIntegerType('4')

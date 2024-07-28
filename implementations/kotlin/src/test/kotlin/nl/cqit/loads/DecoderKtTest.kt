@@ -7,9 +7,10 @@ import nl.cqit.loads.model.BINARY_VALUE
 import nl.cqit.loads.model.CONTAINER_END
 import nl.cqit.loads.model.ELEMENT_SEPARATOR
 import nl.cqit.loads.model.OBJECT_START
-import nl.cqit.loads.model.types.ShortType.INT
+import nl.cqit.loads.model.types.ShortType.*
 import nl.cqit.loads.utils.toUByteArray
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.jupiter.api.Test
 import kotlin.text.Charsets.UTF_8
 
@@ -49,7 +50,7 @@ class DecoderKtTest {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
-            *INT.binaryType,
+            *INT.type,
             *"AQID".toUByteArray(UTF_8)
         )
 
@@ -99,7 +100,7 @@ class DecoderKtTest {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
-            *INT.binaryType,
+            *INT.type,
             *"AQID".toUByteArray(UTF_8)
         )
 
@@ -126,6 +127,312 @@ class DecoderKtTest {
         // verify
         val expected = byteArrayOf(0x01, 0x02, 0x03)
         assertThat(actual).containsExactly(*expected)
+    }
+
+    @Test
+    fun `decode byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Byte = decode(input)
+
+        // verify
+        val expected = 123.toByte()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode byte with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *BYTE.type,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Byte = decode(input)
+
+        // verify
+        val expected = 123.toByte()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    //TODO implement custom type decoding for Byte et all
+//    @Test
+//    fun `decode byte with custom type`() {
+//        // prepare
+//        val input = ubyteArrayOf(
+//            BINARY_VALUE,
+//            *"(i8)".toUByteArray(UTF_8),
+//            *"ew".toUByteArray(UTF_8)
+//        )
+//
+//        // execute
+//        val actual: Byte = decode(input)
+//
+//        // verify
+//        val expected = 123.toByte()
+//        assertThat(actual).isEqualTo(expected)
+//    }
+
+    @Test
+    fun `decode byte with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Byte>(input) }
+            .withMessage("Expected Byte but got INT")
+    }
+
+    @Test
+    fun `decode short`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Short = decode(input)
+
+        // verify
+        val expected = 12345.toShort()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode short with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *SHORT.type,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Short = decode(input)
+
+        // verify
+        val expected = 12345.toShort()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode short with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Short>(input) }
+            .withMessage("Expected Short but got INT")
+    }
+
+    @Test
+    fun `decode short with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Short = decode(input)
+
+        // verify
+        val expected = 123.toShort()
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode int`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Int = decode(input)
+
+        // verify
+        val expected = 1234567890
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode int with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Int = decode(input)
+
+        // verify
+        val expected = 1234567890
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode int with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *LONG.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Int>(input) }
+            .withMessage("Expected Int but got LONG")
+    }
+
+    @Test
+    fun `decode int with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Int = decode(input)
+
+        // verify
+        val expected = 123
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode int with 2 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Int = decode(input)
+
+        // verify
+        val expected = 12345
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode long`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Long = decode(input)
+
+        // verify
+        val expected = 1234567890123456789L
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode long with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *LONG.type,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Long = decode(input)
+
+        // verify
+        val expected = 1234567890123456789L
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode long with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Long>(input) }
+            .withMessage("Expected Long but got INT")
+    }
+
+    @Test
+    fun `decode long with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Long = decode(input)
+
+        // verify
+        val expected = 123L
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode long with 2 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Long = decode(input)
+
+        // verify
+        val expected = 12345L
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode long with 4 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Long = decode(input)
+
+        // verify
+        val expected = 1234567890L
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
