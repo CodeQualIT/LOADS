@@ -46,7 +46,7 @@ class DecoderKtTest {
     }
 
     @Test
-    fun `decode uByteArray with int type`() {
+    fun `decode UByteArray with int type`() {
         // prepare
         val input = ubyteArrayOf(
             BINARY_VALUE,
@@ -721,6 +721,102 @@ class DecoderKtTest {
         // verify
         val expected = 1234567890.toULong()
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Float`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"QEkP2w".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Float = decode(input)
+
+        // verify
+        val expected = 3.1415927f
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Float with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *FLOAT.type,
+            *"QEkP2w".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Float = decode(input)
+
+        // verify
+        val expected = 3.1415927f
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Float with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *DOUBLE.type,
+            *"QEkP2w".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Float>(input) }
+            .withMessage("Expected Float but got DOUBLE")
+    }
+
+    @Test
+    fun `decode Double`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"QAkh-1RELRg".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Double = decode(input)
+
+        // verify
+        val expected = 3.141592653589793
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Double with type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *DOUBLE.type,
+            *"QAkh-1RELRg".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Double = decode(input)
+
+        // verify
+        val expected = 3.141592653589793
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Double with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *FLOAT.type,
+            *"QAkh-1RELRg".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Double>(input) }
+            .withMessage("Expected Double but got FLOAT")
     }
 
     @Test
