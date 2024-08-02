@@ -241,6 +241,10 @@ though it will usually be the case that only 1 boolean will be stored.
 The type can be indicated by `!1` for a single boolean value, or `!2`-`!6` for 2 to 6 boolean values. 
 This removes the need for creating an array when dealing with upto 6 boolean values.
 
+In the case of a single boolean value, the base64url encoded string will be 1 character long and will represent true, 
+except for the value "A" (which represents all 0s in base64url encoding), "0", "f" and "F".
+In those cases, the value will be false. This is done to make the encoding more readable and to avoid confusion.
+
 To save a byte, the value can also be represented by specifying the type as `!t` for true and `!f` for false, 
 with 0 bytes in the Base64 encoded string.
 

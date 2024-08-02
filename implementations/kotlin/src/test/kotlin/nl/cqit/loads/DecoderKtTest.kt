@@ -6,12 +6,18 @@ import nl.cqit.loads.model.ARRAY_START
 import nl.cqit.loads.model.BINARY_VALUE
 import nl.cqit.loads.model.CONTAINER_END
 import nl.cqit.loads.model.ELEMENT_SEPARATOR
+import nl.cqit.loads.model.NULL_VALUE
 import nl.cqit.loads.model.OBJECT_START
 import nl.cqit.loads.model.types.ShortType.*
 import nl.cqit.loads.utils.toUByteArray
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 import kotlin.text.Charsets.UTF_8
 
 class DecoderKtTest {
@@ -27,6 +33,20 @@ class DecoderKtTest {
         // verify
         val expected = "123"
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode String with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: String? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -817,6 +837,116 @@ class DecoderKtTest {
         assertThatIllegalArgumentException()
             .isThrownBy { decode<Double>(input) }
             .withMessage("Expected Double but got FLOAT")
+    }
+
+    @Test
+    fun `decode Boolean with 'true' type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TRUE.type
+        )
+
+        // execute
+        val actual: Boolean = decode(input)
+
+        // verify
+        assertThat(actual).isTrue()
+    }
+
+    @Test
+    fun `decode Boolean with 'false' type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *FALSE.type
+        )
+
+        // execute
+        val actual: Boolean = decode(input)
+
+        // verify
+        assertThat(actual).isFalse()
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "B, true",  // base64 encoded 1
+        "A, false", // base64 encoded 0
+        "C, true",  // base64 encoded 2
+        "-, true",  // base64 encoded 62
+        "_, true",  // base64 encoded 63
+        "1, true",  // unencoded 1
+        "0, false", // unencoded 0
+        "T, true",  // shorthand for true
+        "t, true",  // shorthand for true
+        "F, false", // shorthand for false
+        "f, false", // shorthand for false
+    )
+    fun `decode Boolean with single-boolean type`(value: String, expected: Boolean) {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *BOOLEAN1.type,
+            *value.toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Boolean = decode(input)
+
+        // verify
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    companion object {
+        @JvmStatic
+        fun `decode Boolean with multiple-boolean types`(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of("!1", "A", arrayOf(false)),
+                Arguments.of("!1", "B", arrayOf(true)),
+                Arguments.of("!2",  "B", arrayOf(true, false)),
+                Arguments.of("!2",  "C", arrayOf(false, true)),
+                Arguments.of("!3",  "D", arrayOf(true, true, false)),
+                Arguments.of("!3",  "E", arrayOf(false, false, true)),
+                Arguments.of("!4",  "H", arrayOf(true, true, true, false)),
+                Arguments.of("!4",  "I", arrayOf(false, false, false, true)),
+                Arguments.of("!5",  "P", arrayOf(true, true, true, true, false)),
+                Arguments.of("!5",  "Q", arrayOf(false, false, false, false, true)),
+                Arguments.of("!6",  "f", arrayOf(true, true, true, true, true, false)),
+                Arguments.of("!6",  "g", arrayOf(false, false, false, false, false, true)),
+            )
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("decode Boolean with multiple-boolean types")
+    fun `decode Boolean with multiple-boolean types`(type: String, value: String, expected: Array<Boolean>) {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *type.toUByteArray(UTF_8),
+            *value.toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Array<Boolean> = decode(input)
+
+        // verify
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Boolean with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Boolean>(input) }
+            .withMessage("Expected Boolean but got INT")
     }
 
     @Test

@@ -71,7 +71,7 @@ object types {
         }
     }
     internal sealed class SingleBooleanType(suffix: Char) : BooleanType(suffix)
-    internal sealed class MultipleBooleansType(suffix: Char) : BooleanType(suffix)
+    internal sealed class MultipleBooleansType(val suffix: Char) : BooleanType(suffix)
 
     internal sealed class ShortType(val prefix: Char, suffix: Char) : BinaryType("$prefix$suffix") {
         internal data object BYTE : SignedIntegerType('1')
