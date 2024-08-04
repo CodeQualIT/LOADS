@@ -17,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
+import java.time.Instant
 import java.util.stream.Stream
 import kotlin.text.Charsets.UTF_8
 
@@ -947,6 +948,108 @@ class DecoderKtTest {
         assertThatIllegalArgumentException()
             .isThrownBy { decode<Boolean>(input) }
             .withMessage("Expected Boolean but got INT")
+    }
+
+    @Test
+    fun `decode Instant with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Instant = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Instant with 2 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Instant = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(12345)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Instant with 4 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Instant = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(1234567890)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Instant with 8 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP8.type,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Instant = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochMilli(1234567890123456789)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Instant with 8 bytes as @C`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP12.type,
+            *"B1vNFQdbzRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Instant = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123456789, 123456789)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Instant with 12 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP12.type,
+            *"K9xUXWtLhwdbzRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Instant = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(12345678901234567, 123456789)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test

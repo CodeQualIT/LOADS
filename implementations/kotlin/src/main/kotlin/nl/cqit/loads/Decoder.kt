@@ -7,7 +7,6 @@ import nl.cqit.loads.model.types.ShortType.*
 import nl.cqit.loads.model.types.SingleBooleanType
 import nl.cqit.loads.model.types.TimestampType
 import nl.cqit.loads.utils.*
-import java.nio.ByteBuffer
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC
@@ -43,9 +42,9 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
         type.classifier == Float::class -> toFloat(data, offset)
         type.classifier == Double::class -> toDouble(data, offset)
         type.classifier == Boolean::class -> toBoolean(data, offset)
-        type.classifier == Instant::class -> toInstant(type, data, offset)
-        type.classifier == OffsetDateTime::class -> toOffsetDateTime(type, data, offset)
-        type.classifier == ZonedDateTime::class -> toZonedDateTime(type, data, offset)
+        type.classifier == Instant::class -> toInstant(data, offset)
+        type.classifier == OffsetDateTime::class -> toOffsetDateTime(data, offset)
+        type.classifier == ZonedDateTime::class -> toZonedDateTime(data, offset)
         else -> throw NotImplementedError()
     }
     if (result == null && !type.isMarkedNullable) error("Expected non-null type $type value but got null.")
@@ -130,60 +129,27 @@ private fun toDouble(data: UByteArray, offset: Int): Pair<Int, Double?> {
 private fun toBoolean(data: UByteArray, offset: Int): Pair<Int, Boolean?> {
     val (newOffset, value, binaryType) = extractBinary(data, offset)
     require(binaryType is SingleBooleanType?) { "Expected Boolean but got $binaryType" }
-    return newOffset to value?.let {
-        when (binaryType) {
-            null, BOOLEAN1 -> value[0] !in listOf<UByte>(
-                0u,
-                5u,  // "F" in base64
-                31u, // "f" in base64
-                52u, // "0" in base64
-            )
-            TRUE -> true
-            FALSE -> false
-        }
-    }
+    return newOffset to value?.toBoolean(binaryType)
 }
 
-private fun toInstant(type: KType, data: UByteArray, offset: Int): Pair<Int, Instant?> {
+private fun toInstant(data: UByteArray, offset: Int): Pair<Int, Instant?> {
     val (newOffset, value, binaryType) = extractBinary(data, offset)
     require(binaryType is TimestampType?) { "Expected Instant but got $binaryType" }
-    val valueByteBuffer = value?.toByteBuffer()
-    return newOffset to valueByteBuffer?.toInstant(binaryType, value)
+    return newOffset to value?.toInstant(binaryType)
 }
 
-private fun toOffsetDateTime(type: KType, data: UByteArray, offset: Int): Pair<Int, OffsetDateTime?> {
+private fun toOffsetDateTime(data: UByteArray, offset: Int): Pair<Int, OffsetDateTime?> {
     val (newOffset, value, binaryType) = extractBinary(data, offset)
     require(binaryType is TimestampType) { "Expected OffsetDateTime but got $binaryType" }
-    val valueByteBuffer = value?.toByteBuffer()
     // TODO add support for other time zone offsets (spec doesn't support passing along the time zone offset yet)
-    return newOffset to valueByteBuffer?.toInstant(binaryType, value)?.atOffset(UTC)
+    return newOffset to value?.toInstant(binaryType)?.atOffset(UTC)
 }
 
-private fun toZonedDateTime(type: KType, data: UByteArray, offset: Int): Pair<Int, ZonedDateTime?> {
+private fun toZonedDateTime(data: UByteArray, offset: Int): Pair<Int, ZonedDateTime?> {
     val (newOffset, value, binaryType) = extractBinary(data, offset)
     require(binaryType is TimestampType) { "Expected ZonedDateTime but got $binaryType" }
-    val valueByteBuffer = value?.toByteBuffer()
     // TODO add support for other time zones (spec doesn't support passing along the time zone yet)
-    return newOffset to valueByteBuffer?.toInstant(binaryType, value)?.atZone(UTC)
-}
-
-private fun ByteBuffer.toInstant(timestampType: TimestampType?, value: UByteArray): Instant? =
-    if (timestampType != null)
-        toInstantFromType(timestampType, this)
-    else
-        toInstantFromBufferSize(value.size, this)
-
-private fun toInstantFromType(type: TimestampType, valueByteBuffer: ByteBuffer): Instant? = when (type) {
-    TIMESTAMP4 -> Instant.ofEpochSecond(valueByteBuffer.getInt().toLong())
-    TIMESTAMP8 -> Instant.ofEpochMilli(valueByteBuffer.getLong())
-    TIMESTAMP12 -> Instant.ofEpochSecond(valueByteBuffer.getInt().toLong(), valueByteBuffer.getInt().toLong())
-}
-
-private fun toInstantFromBufferSize(size: Int, valueByteBuffer: ByteBuffer): Instant? = when (size) {
-    4 -> Instant.ofEpochSecond(valueByteBuffer.getInt().toLong())
-    8 -> Instant.ofEpochMilli(valueByteBuffer.getLong())
-    12 -> Instant.ofEpochSecond(valueByteBuffer.getInt().toLong(), valueByteBuffer.getInt().toLong())
-    else -> error("Invalid Instant size: $size. Required 4, 8 or 12 bytes.")
+    return newOffset to value?.toInstant(binaryType)?.atZone(UTC)
 }
 
 private fun toArray(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>> =
