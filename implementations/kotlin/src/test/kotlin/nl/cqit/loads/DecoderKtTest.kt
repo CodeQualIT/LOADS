@@ -18,6 +18,9 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset.UTC
+import java.time.ZonedDateTime
 import java.util.stream.Stream
 import kotlin.text.Charsets.UTF_8
 
@@ -985,6 +988,23 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode Instant with 3 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"AeJA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Instant = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123456)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
     fun `decode Instant with 4 bytes`() {
         // prepare
         val input = ubyteArrayOf(
@@ -998,6 +1018,23 @@ class DecoderKtTest {
 
         // verify
         val expected = Instant.ofEpochSecond(1234567890)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Instant with 7 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP8.type,
+            *"BGLVPIq6wA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Instant = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochMilli(1234567890123456)
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -1050,6 +1087,323 @@ class DecoderKtTest {
         // verify
         val expected = Instant.ofEpochSecond(12345678901234567, 123456789)
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Instant with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Instant>(input) }
+            .withMessage("Expected Instant but got INT")
+    }
+
+    @Test
+    fun `decode OffsetDateTime with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: OffsetDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123).atOffset(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode OffsetDateTime with 2 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: OffsetDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(12345).atOffset(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode OffsetDateTime with 3 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"AeJA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: OffsetDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123456).atOffset(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode OffsetDateTime with 4 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: OffsetDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(1234567890).atOffset(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode OffsetDateTime with 7 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP8.type,
+            *"BGLVPIq6wA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: OffsetDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochMilli(1234567890123456).atOffset(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode OffsetDateTime with 8 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP8.type,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: OffsetDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochMilli(1234567890123456789).atOffset(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode OffsetDateTime with 8 bytes as @C`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP12.type,
+            *"B1vNFQdbzRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: OffsetDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123456789, 123456789).atOffset(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode OffsetDateTime with 12 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP12.type,
+            *"K9xUXWtLhwdbzRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: OffsetDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(12345678901234567, 123456789).atOffset(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode OffsetDateTime with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<OffsetDateTime>(input) }
+            .withMessage("Expected OffsetDateTime but got INT")
+    }
+
+    @Test
+    fun `decode ZonedDateTime with 1 byte`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"ew".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ZonedDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123).atZone(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ZonedDateTime with 2 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"MDk".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ZonedDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(12345).atZone(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ZonedDateTime with 3 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"AeJA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ZonedDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123456).atZone(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ZonedDateTime with 4 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP4.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ZonedDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(1234567890).atZone(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ZonedDateTime with 7 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP8.type,
+            *"BGLVPIq6wA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ZonedDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochMilli(1234567890123456).atZone(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ZonedDateTime with 8 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP8.type,
+            *"ESIQ9H3pgRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ZonedDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochMilli(1234567890123456789).atZone(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ZonedDateTime with 8 bytes as @C`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP12.type,
+            *"B1vNFQdbzRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ZonedDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(123456789, 123456789).atZone(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ZonedDateTime with 12 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *TIMESTAMP12.type,
+            *"K9xUXWtLhwdbzRU".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ZonedDateTime = decode(input)
+
+        // verify
+        val expected = Instant.ofEpochSecond(12345678901234567, 123456789).atZone(UTC)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ZonedDateTime with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"SZYC0g".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<ZonedDateTime>(input) }
+            .withMessage("Expected ZonedDateTime but got INT")
     }
 
     @Test
