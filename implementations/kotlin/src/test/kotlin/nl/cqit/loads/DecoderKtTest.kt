@@ -631,7 +631,7 @@ class DecoderKtTest {
         val actual: UInt = decode(input)
 
         // verify
-        val expected = 1234567890.toUInt()
+        val expected = 1234567890u
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -648,7 +648,7 @@ class DecoderKtTest {
         val actual: UInt = decode(input)
 
         // verify
-        val expected = 1234567890.toUInt()
+        val expected = 1234567890u
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -679,7 +679,7 @@ class DecoderKtTest {
         val actual: UInt = decode(input)
 
         // verify
-        val expected = 123.toUInt()
+        val expected = 123u
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -695,7 +695,7 @@ class DecoderKtTest {
         val actual: UInt = decode(input)
 
         // verify
-        val expected = 12345.toUInt()
+        val expected = 12345u
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -711,7 +711,7 @@ class DecoderKtTest {
         val actual: ULong = decode(input)
 
         // verify
-        val expected = 1234567890123456789L.toULong()
+        val expected = 1234567890123456789uL
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -728,7 +728,7 @@ class DecoderKtTest {
         val actual: ULong = decode(input)
 
         // verify
-        val expected = 1234567890123456789L.toULong()
+        val expected = 1234567890123456789uL
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -759,7 +759,7 @@ class DecoderKtTest {
         val actual: ULong = decode(input)
 
         // verify
-        val expected = 123.toULong()
+        val expected = 123uL
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -775,7 +775,7 @@ class DecoderKtTest {
         val actual: ULong = decode(input)
 
         // verify
-        val expected = 12345.toULong()
+        val expected = 12345uL
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -791,7 +791,7 @@ class DecoderKtTest {
         val actual: ULong = decode(input)
 
         // verify
-        val expected = 1234567890.toULong()
+        val expected = 1234567890uL
         assertThat(actual).isEqualTo(expected)
     }
 
