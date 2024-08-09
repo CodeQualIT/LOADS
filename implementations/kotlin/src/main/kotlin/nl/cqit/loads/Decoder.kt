@@ -140,14 +140,14 @@ private fun toInstant(data: UByteArray, offset: Int): Pair<Int, Instant?> {
 
 private fun toOffsetDateTime(data: UByteArray, offset: Int): Pair<Int, OffsetDateTime?> {
     val (newOffset, value, binaryType) = extractBinary(data, offset)
-    require(binaryType is TimestampType) { "Expected OffsetDateTime but got $binaryType" }
+    require(binaryType is TimestampType?) { "Expected OffsetDateTime but got $binaryType" }
     // TODO add support for other time zone offsets (spec doesn't support passing along the time zone offset yet)
     return newOffset to value?.toInstant(binaryType)?.atOffset(UTC)
 }
 
 private fun toZonedDateTime(data: UByteArray, offset: Int): Pair<Int, ZonedDateTime?> {
     val (newOffset, value, binaryType) = extractBinary(data, offset)
-    require(binaryType is TimestampType) { "Expected ZonedDateTime but got $binaryType" }
+    require(binaryType is TimestampType?) { "Expected ZonedDateTime but got $binaryType" }
     // TODO add support for other time zones (spec doesn't support passing along the time zone yet)
     return newOffset to value?.toInstant(binaryType)?.atZone(UTC)
 }

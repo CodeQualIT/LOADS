@@ -104,6 +104,20 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode UByteArray with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: UByteArray? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun `decode ByteArray`() {
         // prepare
         val input = ubyteArrayOf(
@@ -151,6 +165,20 @@ class DecoderKtTest {
         // verify
         val expected = byteArrayOf(0x01, 0x02, 0x03)
         assertThat(actual).containsExactly(*expected)
+    }
+
+    @Test
+    fun `decode ByteArray with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: ByteArray? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -220,6 +248,20 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode Byte with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Byte? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun `decode Short`() {
         // prepare
         val input = ubyteArrayOf(
@@ -281,6 +323,20 @@ class DecoderKtTest {
         // verify
         val expected = 123.toShort()
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Short with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Short? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -377,6 +433,20 @@ class DecoderKtTest {
         // verify
         val expected = 123456
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Int with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Int? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -508,6 +578,20 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode Long with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Long? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun `decode UByte`() {
         // prepare
         val input = ubyteArrayOf(
@@ -553,6 +637,20 @@ class DecoderKtTest {
         assertThatIllegalArgumentException()
             .isThrownBy { decode<UByte>(input) }
             .withMessage("Expected UByte but got INT")
+    }
+
+    @Test
+    fun `decode UByte with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: UByte? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -617,6 +715,20 @@ class DecoderKtTest {
         // verify
         val expected = 123.toUShort()
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UShort with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: UShort? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -700,6 +812,36 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode UInt with 3 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"AeJA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: UInt = decode(input)
+
+        // verify
+        val expected = 123456u
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode UInt with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: UInt? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun `decode ULong`() {
         // prepare
         val input = ubyteArrayOf(
@@ -780,6 +922,22 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode ULong with 3 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"AeJA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ULong = decode(input)
+
+        // verify
+        val expected = 123456uL
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
     fun `decode ULong with 4 bytes`() {
         // prepare
         val input = ubyteArrayOf(
@@ -793,6 +951,36 @@ class DecoderKtTest {
         // verify
         val expected = 1234567890uL
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ULong with 7 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"BGLVPIq6wA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: ULong = decode(input)
+
+        // verify
+        val expected = 1234567890123456uL
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode ULong with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: ULong? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -844,6 +1032,20 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode Float with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Float? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun `decode Double`() {
         // prepare
         val input = ubyteArrayOf(
@@ -889,6 +1091,20 @@ class DecoderKtTest {
         assertThatIllegalArgumentException()
             .isThrownBy { decode<Double>(input) }
             .withMessage("Expected Double but got FLOAT")
+    }
+
+    @Test
+    fun `decode Double with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Double? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -999,6 +1215,20 @@ class DecoderKtTest {
         assertThatIllegalArgumentException()
             .isThrownBy { decode<Boolean>(input) }
             .withMessage("Expected Boolean but got INT")
+    }
+
+    @Test
+    fun `decode Boolean with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Boolean? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test
@@ -1153,6 +1383,20 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode Instant with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Instant? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun `decode OffsetDateTime with 1 byte`() {
         // prepare
         val input = ubyteArrayOf(
@@ -1304,6 +1548,20 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode OffsetDateTime with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: OffsetDateTime? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun `decode ZonedDateTime with 1 byte`() {
         // prepare
         val input = ubyteArrayOf(
@@ -1452,6 +1710,20 @@ class DecoderKtTest {
         assertThatIllegalArgumentException()
             .isThrownBy { decode<ZonedDateTime>(input) }
             .withMessage("Expected ZonedDateTime but got INT")
+    }
+
+    @Test
+    fun `decode ZonedDateTime with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: ZonedDateTime? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
     }
 
     @Test

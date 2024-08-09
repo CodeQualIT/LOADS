@@ -11,6 +11,7 @@ import nl.cqit.loads.model.VALUE_TERMINATORS
 import nl.cqit.loads.model.types
 
 internal fun extractBinary(data: UByteArray, offset: Int): Triple<Int, UByteArray?, types.BinaryType?> {
+    if (data.size > offset && data[offset] == NULL_VALUE && (data.size == offset + 1 || data[offset + 1] in VALUE_TERMINATORS)) return Triple(offset + 1, null, null)
     require(data[offset] == BINARY_VALUE) { INVALID_BINARY_VALUE_MSG + offset }
     val (valueOffset, typeUBytes) = when {
         data[offset + 1] in types.BinaryType.PREDEFINED_BINARY_TYPE_CATEGORIES -> offset + 3 to data.sliceArray(offset + 1 until offset + 3)
