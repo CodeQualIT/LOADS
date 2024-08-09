@@ -364,6 +364,22 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode Int with 3 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"AeJA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Int = decode(input)
+
+        // verify
+        val expected = 123456
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
     fun `decode Long`() {
         // prepare
         val input = ubyteArrayOf(
@@ -444,6 +460,22 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode Long with 3 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"AeJA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Long = decode(input)
+
+        // verify
+        val expected = 123456L
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
     fun `decode Long with 4 bytes`() {
         // prepare
         val input = ubyteArrayOf(
@@ -456,6 +488,22 @@ class DecoderKtTest {
 
         // verify
         val expected = 1234567890L
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Long with 7 bytes`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *"BGLVPIq6wA".toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Long = decode(input)
+
+        // verify
+        val expected = 1234567890123456L
         assertThat(actual).isEqualTo(expected)
     }
 
