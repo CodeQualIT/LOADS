@@ -54,6 +54,19 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode non-null String with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<String>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode UByteArray`() {
         // prepare
         val input = ubyteArrayOf(
@@ -118,6 +131,19 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode non-null UByteArray with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<UByteArray>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode ByteArray`() {
         // prepare
         val input = ubyteArrayOf(
@@ -179,6 +205,19 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null ByteArray with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<ByteArray>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -262,6 +301,19 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode non-null Byte with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Byte>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode Short`() {
         // prepare
         val input = ubyteArrayOf(
@@ -337,6 +389,19 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null Short with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Short>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -447,6 +512,19 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null Int with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Int>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -592,6 +670,19 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode non-null Long with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Long>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode UByte`() {
         // prepare
         val input = ubyteArrayOf(
@@ -651,6 +742,19 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null UByte with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<UByte>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -729,6 +833,19 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null UShort with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<UShort>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -839,6 +956,19 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null UInt with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<UInt>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -984,6 +1114,19 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode non-null ULong with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<ULong>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode Float`() {
         // prepare
         val input = ubyteArrayOf(
@@ -1043,6 +1186,19 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null Float with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Float>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -1108,6 +1264,19 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode non-null Double with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Double>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode Boolean with 'true' type`() {
         // prepare
         val input = ubyteArrayOf(
@@ -1166,43 +1335,6 @@ class DecoderKtTest {
         assertThat(actual).isEqualTo(expected)
     }
 
-    companion object {
-        @JvmStatic
-        fun `decode Boolean with multiple-boolean types`(): Stream<Arguments> {
-            return Stream.of(
-                Arguments.of("!1", "A", arrayOf(false)),
-                Arguments.of("!1", "B", arrayOf(true)),
-                Arguments.of("!2",  "B", arrayOf(true, false)),
-                Arguments.of("!2",  "C", arrayOf(false, true)),
-                Arguments.of("!3",  "D", arrayOf(true, true, false)),
-                Arguments.of("!3",  "E", arrayOf(false, false, true)),
-                Arguments.of("!4",  "H", arrayOf(true, true, true, false)),
-                Arguments.of("!4",  "I", arrayOf(false, false, false, true)),
-                Arguments.of("!5",  "P", arrayOf(true, true, true, true, false)),
-                Arguments.of("!5",  "Q", arrayOf(false, false, false, false, true)),
-                Arguments.of("!6",  "f", arrayOf(true, true, true, true, true, false)),
-                Arguments.of("!6",  "g", arrayOf(false, false, false, false, false, true)),
-            )
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("decode Boolean with multiple-boolean types")
-    fun `decode Boolean with multiple-boolean types`(type: String, value: String, expected: Array<Boolean>) {
-        // prepare
-        val input = ubyteArrayOf(
-            BINARY_VALUE,
-            *type.toUByteArray(UTF_8),
-            *value.toUByteArray(UTF_8)
-        )
-
-        // execute
-        val actual: Array<Boolean> = decode(input)
-
-        // verify
-        assertThat(actual).isEqualTo(expected)
-    }
-
     @Test
     fun `decode Boolean with wrong type`() {
         // prepare
@@ -1229,6 +1361,100 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null Boolean with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Boolean>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    companion object {
+        @JvmStatic
+        fun `decode Boolean with multiple-boolean types`(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of("!f", "", arrayOf(false)),
+                Arguments.of("!t", "", arrayOf(true)),
+                Arguments.of("!1", "A", arrayOf(false)),
+                Arguments.of("!1", "B", arrayOf(true)),
+                Arguments.of("!2",  "B", arrayOf(true, false)),
+                Arguments.of("!2",  "C", arrayOf(false, true)),
+                Arguments.of("!3",  "D", arrayOf(true, true, false)),
+                Arguments.of("!3",  "E", arrayOf(false, false, true)),
+                Arguments.of("!4",  "H", arrayOf(true, true, true, false)),
+                Arguments.of("!4",  "I", arrayOf(false, false, false, true)),
+                Arguments.of("!5",  "P", arrayOf(true, true, true, true, false)),
+                Arguments.of("!5",  "Q", arrayOf(false, false, false, false, true)),
+                Arguments.of("!6",  "f", arrayOf(true, true, true, true, true, false)),
+                Arguments.of("!6",  "g", arrayOf(false, false, false, false, false, true)),
+            )
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("decode Boolean with multiple-boolean types")
+    fun `decode Boolean array with multiple-boolean types`(type: String, value: String, expected: Array<Boolean>) {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *type.toUByteArray(UTF_8),
+            *value.toUByteArray(UTF_8)
+        )
+
+        // execute
+        val actual: Array<Boolean> = decode(input)
+
+        // verify
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode Boolean array with wrong type`() {
+        // prepare
+        val input = ubyteArrayOf(
+            BINARY_VALUE,
+            *INT.type,
+            *"A".toUByteArray(UTF_8)
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Array<Boolean>>(input) }
+            .withMessage("Expected Boolean array but got INT")
+    }
+
+    @Test
+    fun `decode Boolean array with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Array<Boolean>? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null Boolean array with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Array<Boolean>>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -1397,6 +1623,19 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode non-null Instant with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Instant>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode OffsetDateTime with 1 byte`() {
         // prepare
         val input = ubyteArrayOf(
@@ -1559,6 +1798,19 @@ class DecoderKtTest {
 
         // verify
         assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null OffsetDateTime with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<OffsetDateTime>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -1727,6 +1979,67 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode non-null ZonedDateTime with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<ZonedDateTime>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
+    fun `decode array of strings`() {
+        // prepare
+        val input = ubyteArrayOf(
+            ARRAY_START,
+            *"123".toUByteArray(UTF_8),
+            ELEMENT_SEPARATOR,
+            *"456".toUByteArray(UTF_8),
+            ELEMENT_SEPARATOR,
+            *"789".toUByteArray(UTF_8),
+            CONTAINER_END,
+        )
+
+        // execute
+        val actual: Array<String> = decode(input)
+
+        // verify
+        val expected = arrayOf("123", "456", "789")
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode array of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Array<String>? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null array of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Array<String>>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode list of strings`() {
         // prepare
         val input = ubyteArrayOf(
@@ -1748,6 +2061,33 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode list of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: List<String>? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null list of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<List<String>>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode set of strings`() {
         // prepare
         val input = ubyteArrayOf(
@@ -1766,6 +2106,33 @@ class DecoderKtTest {
         // verify
         val expected = setOf("123", "456", "789")
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode set of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Set<String>? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null set of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Set<String>>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -1792,6 +2159,33 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode collection of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Collection<String>? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null collection of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Collection<String>>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode map of strings`() {
         // prepare
         val input = ubyteArrayOf(
@@ -1808,6 +2202,33 @@ class DecoderKtTest {
         // verify
         val expected = mapOf("map" to "123")
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `decode map of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Map<String, String>? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null map of strings with null value`() {
+        // prepare
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Map<String, String>>(input) }
+            .withMessage("Expected non-null value, but got null.")
     }
 
     @Test
@@ -1857,6 +2278,41 @@ class DecoderKtTest {
     }
 
     @Test
+    fun `decode data class with null value`() {
+        // prepare
+        data class Obj(
+            val str: String,
+        )
+
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute
+        val actual: Obj? = decode(input)
+
+        // verify
+        assertThat(actual).isNull()
+    }
+
+    @Test
+    fun `decode non-null data class with null value`() {
+        // prepare
+        data class Obj(
+            val str: String,
+        )
+
+        val input = ubyteArrayOf(
+            NULL_VALUE
+        )
+
+        // execute and verify
+        assertThatIllegalArgumentException()
+            .isThrownBy { decode<Obj>(input) }
+            .withMessage("Expected non-null value, but got null.")
+    }
+
+    @Test
     fun `decode complex data class`() {
         // prepare
         data class Obj(
@@ -1892,27 +2348,6 @@ class DecoderKtTest {
             map = mapOf("456" to "789"),
             arr = listOf("123", "456")
         )
-        assertThat(actual).isEqualTo(expected)
-    }
-
-    @Test
-    fun `decode array of strings`() {
-        // prepare
-        val input = ubyteArrayOf(
-            ARRAY_START,
-            *"123".toUByteArray(UTF_8),
-            ELEMENT_SEPARATOR,
-            *"456".toUByteArray(UTF_8),
-            ELEMENT_SEPARATOR,
-            *"789".toUByteArray(UTF_8),
-            CONTAINER_END,
-        )
-
-        // execute
-        val actual: Array<String> = decode(input)
-
-        // verify
-        val expected = arrayOf("123", "456", "789")
         assertThat(actual).isEqualTo(expected)
     }
 

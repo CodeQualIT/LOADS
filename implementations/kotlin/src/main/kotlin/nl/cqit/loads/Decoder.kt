@@ -22,7 +22,7 @@ inline fun <reified T> decode(data: UByteArray): T {
 
 fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
     val (newOffset: Int, result: Any?) = when {
-        type.isSubtypeOf(typeOf<Array<*>>()) -> toArray(type, data, offset)
+        type.isSubtypeOf(typeOf<Array<*>?>()) -> toArray(type, data, offset)
         type.classifier == List::class -> toList(type, data, offset)
         type.classifier == Set::class -> toSet(type, data, offset)
         type.classifier == Collection::class -> toCollection(type, data, offset)
@@ -47,7 +47,7 @@ fun decode(type: KType, data: UByteArray, offset: Int): Pair<Int, *> {
         type.classifier == ZonedDateTime::class -> toZonedDateTime(data, offset)
         else -> throw NotImplementedError()
     }
-    if (result == null && !type.isMarkedNullable) error("Expected non-null type $type value but got null.")
+    require (result != null || type.isMarkedNullable) { "Expected non-null value, but got null." }
     return newOffset to result
 }
 
@@ -152,19 +152,19 @@ private fun toZonedDateTime(data: UByteArray, offset: Int): Pair<Int, ZonedDateT
     return newOffset to value?.toInstant(binaryType)?.atZone(UTC)
 }
 
-private fun toArray(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>> =
+private fun toArray(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Array<*>?> =
     toArrayContainer(containerType, MutableList<*>::toTypedArray.andThen { cast(containerType.elemType()) }, data, offset)
 
-private fun toList(containerType: KType, data: UByteArray, offset: Int): Pair<Int, List<*>> =
+private fun toList(containerType: KType, data: UByteArray, offset: Int): Pair<Int, List<*>?> =
     toArrayContainer(containerType, MutableList<*>::toList, data, offset)
 
-private fun toSet(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Set<*>> =
+private fun toSet(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Set<*>?> =
     toArrayContainer(containerType, MutableList<*>::toSet, data, offset)
 
-private fun toCollection(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Collection<*>> =
+private fun toCollection(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Collection<*>?> =
     toArrayContainer(containerType, MutableList<*>::toList, data, offset)
 
-private fun toMap(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Map<*, *>> {
+private fun toMap(containerType: KType, data: UByteArray, offset: Int): Pair<Int, Map<*, *>?> {
     return toObjectContainer(
         containerType.keyType(), { it }, { containerType.valueType() },
         MutableMap<*, *>::toMap, data, offset
